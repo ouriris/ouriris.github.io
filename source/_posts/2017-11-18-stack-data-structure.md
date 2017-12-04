@@ -9,7 +9,9 @@ tags:
 #### 一、什么是栈
 &emsp;&emsp;栈是一种数据结构。栈是一种特殊的线性表。其特殊性在于限定插入和删除数据元素的操作只能在线性表的一端进行，最大的特点就是先进后出。</br>
 &emsp;&emsp;想一想，生活中，有很多栈的例子。比如叠在一起的碗盘，叠的时候我们是从底往高处叠，但是取的时候，我们是从最上面的一个依次向下取。这也是一个典型的栈：后进先出，先进后出。<br>
+<div align=center>
 ![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/stack.png)
+</div>
 #### 一、栈的实现
 - **使用int数组**
 ```
