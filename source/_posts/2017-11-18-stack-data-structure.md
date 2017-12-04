@@ -4,12 +4,12 @@ date: 2017-12-04 08:52:32
 tags:
 ---
 #### 一、什么是数据结构
-&emsp;&emsp;数据结构是计算机存储、组织数据的方式。数据结构是指相互之间存在一种或多种特定关系的数据元素的集合。在初学阶段，你可以认为数据结构就是关于数据在计算机中如何组织的一门课程。</br>
+&emsp;&emsp;数据结构是计算机存储、组织数据的方式。数据结构是指相互之间存在一种或多种特定关系的数据元素的集合。在初学阶段，你可以认为数据结构就是关于数据在计算机中如何组织的一门课程。
 &emsp;&emsp;比如，我要往一个数组中，存1，3，2这三个整数，那么，我实际存的时候，是按照从小到大排着存呢，还是从大到小存，还是没有顺序随便存，这要根据实际的需求来决定。根据需求决定数据存储的方式。这就是数据结构要研究的内容.
 #### 一、什么是栈
-&emsp;&emsp;栈是一种数据结构。栈是一种特殊的线性表。其特殊性在于限定插入和删除数据元素的操作只能在线性表的一端进行，最大的特点就是先进后出。</br>
-&emsp;&emsp;想一想，生活中，有很多栈的例子。比如叠在一起的碗盘，叠的时候我们是从底往高处叠，但是取的时候，我们是从最上面的一个依次向下取。这也是一个典型的栈：后进先出，先进后出。</br>
-![stack image](/uploads/stack.png)
+&emsp;&emsp;栈是一种数据结构。栈是一种特殊的线性表。其特殊性在于限定插入和删除数据元素的操作只能在线性表的一端进行，最大的特点就是先进后出。
+&emsp;&emsp;想一想，生活中，有很多栈的例子。比如叠在一起的碗盘，叠的时候我们是从底往高处叠，但是取的时候，我们是从最上面的一个依次向下取。这也是一个典型的栈：后进先出，先进后出。
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/stack.png)
 #### 一、栈的实现
 - **使用int数组**
 ```
@@ -286,14 +286,14 @@ add 函数被编成了四条字节码指令，这四条字节码是什么意思�
 你可以认为Java的每一个函数都有一个操作数栈，每条指令就是在对这个操作数栈进行操作。比如 iload_0，就代表把第一个参数 push 进操作数栈，iload_1代表把第二个参数 push 进操作数栈，而 iadd 代表，从栈上连续pop两次，取两个数，将其相加，再把结果送到栈上。ireturn 则表示把栈顶的值做为返回值传给调用者。Java字节码的整个执行过程都是在这样一个栈上的。如果用图来表示，这四个步骤就是:
 - iload_0，使a先进栈
 
-![java_stack image](/uploads/java_stack_01.png)
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/java_stack_01.png)
 
 - iload_1， 使b进栈
 
-![java_stack image](/uploads/java_stack_02.png)
+![](/uploads/https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/java_stack_02.png)
 
 - iadd，做了三件事情，b 和 a 出栈，计算 a+b，将计算结果入栈：
 
-![java_stack image](/uploads/java_stack_03.png)
+![](/uploads/https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/java_stack_03.png)
 
 - ireturn 将当前栈顶的值返回出去。
