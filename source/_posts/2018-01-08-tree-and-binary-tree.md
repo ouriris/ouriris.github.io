@@ -53,8 +53,7 @@
 
 > 二叉排序树（Binary Sort Tree），又称二叉查找树（Binary Search Tree），亦称二叉搜索树。
 
-> ![这里写图片描述]
-(https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0=baike80,5,5,80,26/sign=b3c80026d72a6059461de948495d5ffe/94cad1c8a786c9179df9bed6c93d70cf3ac75763.jpg)
+> ![这里写图片描述](https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0=baike80,5,5,80,26/sign=b3c80026d72a6059461de948495d5ffe/94cad1c8a786c9179df9bed6c93d70cf3ac75763.jpg)
 ##### 定义
 > 二叉排序树或者是一棵空树，或者是具有下列性质的二叉树：
 （1）若左子树不空，则 **左子树** 上所有结点的值均 **<=** 它的 **根结点** 的值；
