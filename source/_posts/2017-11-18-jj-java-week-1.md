@@ -1,7 +1,9 @@
 ---
-title: 进击的Java新人Week.1学习笔记
+title: Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记)
 date: 2017-11-18 17:37:07
-tags: Java
+tags:
+- Java
+- 进击的Java新人
 ---
 Author: Yellow
 

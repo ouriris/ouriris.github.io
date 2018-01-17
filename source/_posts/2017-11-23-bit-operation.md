@@ -1,7 +1,9 @@
 ---
-title: 进击的Java新人Week.3学习笔记(位操作)
+title: Java位操作(进击的Java新人Week.3学习笔记)
 date: 2017-11-23 20:10:16
-tags: Java
+tags:
+- Java
+- 进击的Java新人
 ---
 Author: Oscar
 

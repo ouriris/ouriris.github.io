@@ -1,7 +1,9 @@
 ---
-title: 进击的Java新人Week.2学习笔记(stack data structure)
+title: 数据结构:栈(进击的Java新人Week.2学习笔记)
 date: 2017-12-04 08:52:32
-tags: Java
+tags:
+- Java
+- 进击的Java新人
 ---
 Author: Kelvin
 
