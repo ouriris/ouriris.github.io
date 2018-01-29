@@ -1,5 +1,5 @@
 ---
-title: 数据结构:红黑数(进击的Java新人Week.6学习笔记)
+title: 数据结构:红黑树(进击的Java新人Week.6学习笔记)
 date: 2018-01-08 11:11:06
 tags:
 - Java
