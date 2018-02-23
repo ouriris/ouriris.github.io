@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,进击的Java新人," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Author: Mike 树的基本概念基本概念12345678910树的度—— 一棵树中最大的结点度数 双亲—— 孩子结点的上层结点叫该结点的双亲兄弟—— 同一双亲的孩子之间互成为兄弟 祖先—— 结点的祖先是从根到该结点所经分支上的所有结点子孙—— 以某结点为根的子树中的任一结点都成为该结点的子孙结点的层次—— 从根结点算起，根为第一层，它的孩子为第二层……堂兄弟—— 其双亲在同一层的结点互称为堂">
+<meta name="keywords" content="Java,进击的Java新人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构:树和二叉树(进击的Java新人Week.6学习笔记)">
+<meta property="og:url" content="https://ouriris.github.io/2018/01/08/2018-01-08-tree-and-binary-tree/index.html">
+<meta property="og:site_name" content="OurIris">
+<meta property="og:description" content="Author: Mike 树的基本概念基本概念12345678910树的度—— 一棵树中最大的结点度数 双亲—— 孩子结点的上层结点叫该结点的双亲兄弟—— 同一双亲的孩子之间互成为兄弟 祖先—— 结点的祖先是从根到该结点所经分支上的所有结点子孙—— 以某结点为根的子树中的任一结点都成为该结点的子孙结点的层次—— 从根结点算起，根为第一层，它的孩子为第二层……堂兄弟—— 其双亲在同一层的结点互称为堂">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://camo.githubusercontent.com/53c4d0dde86f6d32b6de6e23ba673dfdb71b4dd1/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f38334241394637444645333934303144383041314646444441354146464630442f3131363530">
+<meta property="og:image" content="https://camo.githubusercontent.com/57e69172b8ee4839cc6ec13e792bea09c246fea1/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f34414239383935373638454434344231384435443742313438383544373633332f3132303037">
+<meta property="og:image" content="https://camo.githubusercontent.com/803c1ae073ca11faa9be42431b1e8e05fc660546/68747470733a2f2f706963312e7a68696d672e636f6d2f35302f76322d61343262663934343937346466386362643330313135393337316363663638345f68642e6a7067">
+<meta property="og:image" content="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0=baike80,5,5,80,26/sign=a8d4f7d2b4096b63951456026d5aec21/b03533fa828ba61e0a41f8d24b34970a314e599b.jpg">
+<meta property="og:image" content="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0=baike80,5,5,80,26/sign=b3c80026d72a6059461de948495d5ffe/94cad1c8a786c9179df9bed6c93d70cf3ac75763.jpg">
+<meta property="og:image" content="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=f997b13a8c01a18be4e61a1dff466c6d/3801213fb80e7bec26a434f7242eb9389b506bad.jpg">
+<meta property="og:updated_time" content="2018-02-23T09:31:16.758Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据结构:树和二叉树(进击的Java新人Week.6学习笔记)">
+<meta name="twitter:description" content="Author: Mike 树的基本概念基本概念12345678910树的度—— 一棵树中最大的结点度数 双亲—— 孩子结点的上层结点叫该结点的双亲兄弟—— 同一双亲的孩子之间互成为兄弟 祖先—— 结点的祖先是从根到该结点所经分支上的所有结点子孙—— 以某结点为根的子树中的任一结点都成为该结点的子孙结点的层次—— 从根结点算起，根为第一层，它的孩子为第二层……堂兄弟—— 其双亲在同一层的结点互称为堂">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/53c4d0dde86f6d32b6de6e23ba673dfdb71b4dd1/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f38334241394637444645333934303144383041314646444441354146464630442f3131363530">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ouriris.github.io/2018/01/08/2018-01-08-tree-and-binary-tree/"/>
+
+
+
+
+
+  <title>数据结构:树和二叉树(进击的Java新人Week.6学习笔记) | OurIris</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">OurIris</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Good good study</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/01/08/2018-01-08-tree-and-binary-tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据结构:树和二叉树(进击的Java新人Week.6学习笔记)</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-08T11:11:06+08:00">
+                2018-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Author: Mike</p>
+<h1 id="树的基本概念"><a href="#树的基本概念" class="headerlink" title="树的基本概念"></a>树的基本概念</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">树的度—— 一棵树中最大的结点度数 </span><br><span class="line">双亲—— 孩子结点的上层结点叫该结点的双亲</span><br><span class="line">兄弟—— 同一双亲的孩子之间互成为兄弟 </span><br><span class="line">祖先—— 结点的祖先是从根到该结点所经分支上的所有结点</span><br><span class="line">子孙—— 以某结点为根的子树中的任一结点都成为该结点的子孙</span><br><span class="line">结点的层次—— 从根结点算起，根为第一层，它的孩子为第二层……</span><br><span class="line">堂兄弟—— 其双亲在同一层的结点互称为堂兄弟。</span><br><span class="line">深度—— 树中结点的最大层次数</span><br><span class="line">有序树—— 如果将树中结点的各子树看成从左至右是有次序的（即不能互换），则称该树为有序树，否则称为无序树。在有序树中最左边的子树的根称为第一个孩子，最右边的称为最后一个孩子。</span><br><span class="line">森林—— m(m0)棵互不相交的树的集合</span><br></pre></td></tr></table></figure>
+<h2 id="形象表示"><a href="#形象表示" class="headerlink" title="形象表示"></a>形象表示</h2><blockquote>
+<p><img src="https://camo.githubusercontent.com/53c4d0dde86f6d32b6de6e23ba673dfdb71b4dd1/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f38334241394637444645333934303144383041314646444441354146464630442f3131363530" alt="这里写图片描述"></p>
+</blockquote>
+<h2 id="m叉树定义"><a href="#m叉树定义" class="headerlink" title="m叉树定义"></a>m叉树定义</h2><blockquote>
+<p>每个结点的度数 &lt;= m;</p>
+</blockquote>
+<h2 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h2><p>于是二叉树有如下五种形态</p>
+<blockquote>
+<p><img src="https://camo.githubusercontent.com/57e69172b8ee4839cc6ec13e792bea09c246fea1/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f34414239383935373638454434344231384435443742313438383544373633332f3132303037" alt="这里写图片描述"></p>
+<p>二叉树的子树有左右之分，不能颠倒</p>
+</blockquote>
+<h3 id="特殊的二叉树"><a href="#特殊的二叉树" class="headerlink" title="特殊的二叉树"></a>特殊的二叉树</h3><h4 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h4><p>重点是 <strong>满</strong><br>形象表示（图片中数字仅代表编号，不代表真实数值）</p>
+<blockquote>
+<p><img src="https://camo.githubusercontent.com/803c1ae073ca11faa9be42431b1e8e05fc660546/68747470733a2f2f706963312e7a68696d672e636f6d2f35302f76322d61343262663934343937346466386362643330313135393337316363663638345f68642e6a7067" alt="这里写图片描述"></p>
+<p>1.定义： <strong>高度为h，并且含有(2^h)-1个结点的二叉树</strong><br>2.对于编号为 <strong>i</strong> 的结点，如果有双亲，双亲为 i/2 向下取整；如果有左孩子，左孩子编号为 <strong>2i</strong>，如果有右孩子，右孩子编号为 <strong>(2i + 1)</strong></p>
+</blockquote>
+<h4 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h4><blockquote>
+<p>1.若设二叉树的深度为h，除第 h 层外，其它各层 <strong>(1～h-1)</strong> 的结点数都<strong>达到最大个数</strong>，第 h 层所有的结点<strong>都连续集中在最左边</strong>，这就是完全二叉树。<br>2.如果有度为 1 的结点，那只可能有一个，且该节点只有<strong>左孩子，而无右孩子</strong></p>
+</blockquote>
+<p>满二叉树、完全二叉树、非完全二叉树对比</p>
+<blockquote>
+<p><img src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0=baike80,5,5,80,26/sign=a8d4f7d2b4096b63951456026d5aec21/b03533fa828ba61e0a41f8d24b34970a314e599b.jpg" alt="这里写图片描述"></p>
+</blockquote>
+<h4 id="二叉排序树"><a href="#二叉排序树" class="headerlink" title="二叉排序树"></a>二叉排序树</h4><p>形象表示</p>
+<blockquote>
+<p>二叉排序树（Binary Sort Tree），又称二叉查找树（Binary Search Tree），亦称二叉搜索树。</p>
+</blockquote>
+<blockquote>
+<p><img src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0=baike80,5,5,80,26/sign=b3c80026d72a6059461de948495d5ffe/94cad1c8a786c9179df9bed6c93d70cf3ac75763.jpg" alt="这里写图片描述"></p>
+</blockquote>
+<h5 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h5><blockquote>
+<p>二叉排序树或者是一棵空树，或者是具有下列性质的二叉树：<br>（1）若左子树不空，则 <strong>左子树</strong> 上所有结点的值均 <strong>&lt;=</strong> 它的 <strong>根结点</strong> 的值；<br>（2）若右子树不空，则 <strong>右子树</strong> 上所有结点的值均 <strong>&gt;=</strong> 它的 <strong>根结点</strong> 的值；<br>（3）左、右子树也分别为二叉排序树 (<strong>递归定义</strong>)；</p>
+</blockquote>
+<h4 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h4><p>形象表示</p>
+<blockquote>
+<p><img src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=f997b13a8c01a18be4e61a1dff466c6d/3801213fb80e7bec26a434f7242eb9389b506bad.jpg" alt="这里写图片描述"></p>
+</blockquote>
+<h5 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h5><blockquote>
+<p>平衡二叉树（Self-balancing binary search tree）又被称为AVL树（有别于AVL算法），且具有以下性质：它是一 棵空树或它的 <strong>左右两个子树的高度差的绝对值不超过1</strong>，并且左右两个子树都是一棵平衡二叉树，同时，平衡二叉树必定是二叉搜索树，反之则不一定</p>
+</blockquote>
+<h3 id="二叉树性质"><a href="#二叉树性质" class="headerlink" title="二叉树性质"></a><a href="http://student.zjzk.cn/course_ware/data_structure/web/SHU/shu6.2.2.htm" target="_blank" rel="noopener">二叉树性质</a></h3><h4 id="性质1-在二叉树的第-i-层上至多有-2-i-1-个-结点-i-gt-1"><a href="#性质1-在二叉树的第-i-层上至多有-2-i-1-个-结点-i-gt-1" class="headerlink" title="性质1 在二叉树的第 i 层上至多有 2^(i-1)个 结点(i&gt;=1)"></a>性质1 在二叉树的第 <strong>i</strong> 层上至多有 <strong>2^(i-1)</strong>个 结点(i&gt;=1)</h4><blockquote>
+<p><strong>用<a href="https://baike.baidu.com/item/%E6%95%B0%E5%AD%A6%E5%BD%92%E7%BA%B3%E6%B3%95" target="_blank" rel="noopener">数学归纳法</a>证明</strong>：<br>归纳基础：<strong>i=1</strong>时，有2^(i-1)=2^0=1。因为第1层上只有一个根结点，所以命题成立。<br>归纳假设：假设对<strong>所有的 j ( 1&lt;=j &lt; i  )</strong> 命题成立，即第j层上至多有 <strong>2^(j-1)</strong> 个结点，证明j=i时命题亦成立。<br>归纳步骤：根据归纳假设，第 i-1 层上至多有2^(i-2)个结点。由于二叉树的每个结点至多有两个孩子，故第 i 层上的结点数至多是第 i-1 层上的最大结点数的<strong>2倍</strong>。即 j=i 时，该层上至多有<strong>2×2^(i-2)=2^(i-1)</strong>个结点，故命题成立。</p>
+</blockquote>
+<h4 id="性质2-深度为k的二叉树至多有2-k-1个结点-k≥1-。"><a href="#性质2-深度为k的二叉树至多有2-k-1个结点-k≥1-。" class="headerlink" title="性质2 深度为k的二叉树至多有2^k-1个结点(k≥1)。"></a>性质2 深度为k的二叉树至多有2^k-1个结点(k≥1)。</h4><blockquote>
+<p>至多，即视之为满二叉树<br>证明：计算等比数列 2^0+2^1+…+2^(k-1)=2^k-1</p>
+</blockquote>
+<h4 id="性质3-在任意-棵二叉树中，若终端结点的个数为n0，度为2的结点数为n2，则no-n2-1。"><a href="#性质3-在任意-棵二叉树中，若终端结点的个数为n0，度为2的结点数为n2，则no-n2-1。" class="headerlink" title="性质3 在任意-棵二叉树中，若终端结点的个数为n0，度为2的结点数为n2，则no=n2+1。"></a>性质3 在任意-棵二叉树中，若终端结点的个数为n0，度为2的结点数为n2，则no=n2+1。</h4><blockquote>
+<p>回顾 m叉树 的性质</p>
+<ol>
+<li>设m叉树中，度数为 i 的结点树为 Ni, 则总结点数为： N = N0 + N1 + … + Nm;</li>
+<li>N = 分支数 + 1 , 1 为根结点</li>
+<li>于是 N = N0 + N1 + …+ Nm = 0<em>(N0) + 1</em>(N1) + … + m*(Nm) + 1</li>
+<li>对应于现在所讨论的二叉树，于是有 N = N0 + N1 + N2 = N1 + 2*(N2) + 1，于是等到结论 N0 = N2 + 1</li>
+</ol>
+</blockquote>
+<p>详细证明</p>
+<blockquote>
+<p>证明：因为二叉树中所有结点的度数均不大于2，所以结点总数(记为n)应等于0度结点数、1度结点(记为n1)和2度结点数之和：<br>                     n=no+n1+n2 (式子1)<br>　    另一方面，1度结点有一个孩子，2度结点有两个孩子，故二叉树中孩子结点总数是：<br>                      nl+2n2<br>　　树中只有根结点不是任何结点的孩子，故二叉树中的结点总数又可表示为：<br>                      n=n1+2n2+1 (式子2)<br>　　由式子1和式子2得到：<br>                      no=n2+1</p>
+</blockquote>
+<h3 id="二叉树遍历"><a href="#二叉树遍历" class="headerlink" title="二叉树遍历"></a>二叉树遍历</h3><blockquote>
+<p>二叉树的前中后序的遍历，坐标名词针对的是 根节点；无论何种遍历，左孩子永远比右孩子前</p>
+</blockquote>
+<ul>
+<li><p><strong>先序递归遍历</strong> 先访问根结点，再前序遍历左子树，最后前序遍历右子树。可见，这个操作的定义就是递归的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pre_order_traversal_recursion_way</span><span class="params">(Node root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        out.print(root.data + <span class="string">" "</span>);</span><br><span class="line">        pre_order_traversal_recursion_way(root.left);</span><br><span class="line">        pre_order_traversal_recursion_way(root.right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>中序递归遍历</strong> 先中序遍历左子树，再访问根结点，最后中序遍历右子树。由于左子树上的值都比根结点小，右子树上的值都比根结点大，所以，中序遍历一棵树所得到的结果，是从小到大有序的，可以根据这个特点，来检验你的中序遍历是否正确实现了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mid_order_traversal_recursion_way</span><span class="params">(Node root)</span></span>&#123;</span><br><span class="line">       <span class="keyword">if</span>(root == <span class="keyword">null</span>)&#123;</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       mid_order_traversal_recursion_way(root.left);</span><br><span class="line">       out.print(root.data+<span class="string">" "</span>);</span><br><span class="line">       mid_order_traversal_recursion_way(root.right);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>后序递归遍历</strong> 先后序遍历左子树，再后序遍历右子树，最后访问根结点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">post_order_traversal_recursion_way</span><span class="params">(Node root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(root == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        post_order_traversal_recursion_way(root.left);</span><br><span class="line">        post_order_traversal_recursion_way(root.right);</span><br><span class="line">        out.print(root.data+<span class="string">" "</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>非递归先序遍历</strong>  先让根节点进栈，只要栈不为空，就可以做弹出操作；每次弹出一个结点，记得把它的左右结点都进栈。记得先右孩子，这样可以保证右子树在栈中总处于左孩子树的下面。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pre_order_traversal_not_recursion_way</span><span class="params">(Node root)</span> <span class="keyword">throws</span> StackEmptyException </span>&#123;</span><br><span class="line">        Stack&lt;Node&gt; stack = <span class="keyword">new</span> Stack(<span class="number">100</span>);</span><br><span class="line">        Node currentNode= root;</span><br><span class="line">        stack.push(currentNode);</span><br><span class="line">        <span class="keyword">while</span> (!stack.isEmpty())&#123;</span><br><span class="line">            currentNode = stack.pop();</span><br><span class="line">            out.print(currentNode.data + <span class="string">" "</span>);</span><br><span class="line">            <span class="keyword">if</span>(currentNode.right != <span class="keyword">null</span>)&#123;</span><br><span class="line">                stack.push(currentNode.right);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(currentNode.left != <span class="keyword">null</span>)&#123;</span><br><span class="line">                stack.push(currentNode.left);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong><a href="http://blog.csdn.net/zhangxiangdavaid/article/details/37115355" target="_blank" rel="noopener">非递归中序遍历</a></strong> </p>
+</li>
+</ul>
+<blockquote>
+<p>一直遍历到左子树最下边，边遍历边保存根节点到栈中<br>当p为空时，说明已经到达左子树最下边，这时需要出栈了<br>进入右子树，开始新的一轮左子树遍历(这是递归的自我实现)  </p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">mid_order_traversal_not_recursion_way</span><span class="params">(Node root)</span> <span class="keyword">throws</span> StackEmptyException </span>&#123;</span><br><span class="line">        Stack&lt;Node&gt; stack = <span class="keyword">new</span> Stack(<span class="number">100</span>);</span><br><span class="line">        Node currentNode = root;</span><br><span class="line">        <span class="keyword">while</span> (currentNode != <span class="keyword">null</span> || !stack.isEmpty())&#123;</span><br><span class="line">            <span class="keyword">if</span>(currentNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">                stack.push(currentNode);</span><br><span class="line">                currentNode = currentNode.left;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                Node topNode = stack.pop();</span><br><span class="line">                out.print(topNode.data + <span class="string">" "</span>);</span><br><span class="line">                currentNode = topNode.right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>层次遍历</strong>  队列，先进先出；每出一个结点，其左右孩子进队；依此类推<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">level_order</span><span class="params">(Node root)</span></span>&#123;</span><br><span class="line">       Queue&lt;Node&gt; queue = <span class="keyword">new</span> LinkedList();</span><br><span class="line">       Node currentNode = root;</span><br><span class="line">       queue.add(currentNode);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">while</span> (!queue.isEmpty())&#123;</span><br><span class="line">           currentNode = queue.poll();</span><br><span class="line">           out.print(currentNode.data+ <span class="string">" "</span>);</span><br><span class="line">           <span class="keyword">if</span>(currentNode.left != <span class="keyword">null</span>)&#123;</span><br><span class="line">               queue.add(currentNode.left);</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">if</span>(currentNode.right != <span class="keyword">null</span>)&#123;</span><br><span class="line">               queue.add(currentNode.right);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<p>数学归纳法：</p>
+<blockquote>
+<p>1）当n=1时,显然成立.<br>2）假设当n=k时（把式中n换成k,写出来）成立,<br>则当n=k+1时,（这步比较困难,化简步骤往往繁琐)该式也成立.<br>由（1）（2）得,原命题对任意正整数均成立</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/进击的Java新人/" rel="tag"># 进击的Java新人</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/08/2018-01-08-AVL-tree/" rel="next" title="数据结构:AVL树(进击的Java新人Week.6学习笔记)">
+                <i class="fa fa-chevron-left"></i> 数据结构:AVL树(进击的Java新人Week.6学习笔记)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/15/2018-01-15-R-B-Tree/" rel="prev" title="数据结构:红黑树(进击的Java新人Week.6学习笔记)">
+                数据结构:红黑树(进击的Java新人Week.6学习笔记) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <a href="/about">
+            <img class="site-author-image" itemprop="image"
+                 src="/uploads/avatar.jpg"
+                 alt="" />
+          </a>
+          <a href="/about">
+            <p class="site-author-name" itemprop="name"></p>
+          </a>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#树的基本概念"><span class="nav-number">1.</span> <span class="nav-text">树的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#形象表示"><span class="nav-number">1.2.</span> <span class="nav-text">形象表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#m叉树定义"><span class="nav-number">1.3.</span> <span class="nav-text">m叉树定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉树"><span class="nav-number">1.4.</span> <span class="nav-text">二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特殊的二叉树"><span class="nav-number">1.4.1.</span> <span class="nav-text">特殊的二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#满二叉树"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">满二叉树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#完全二叉树"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">完全二叉树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二叉排序树"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">二叉排序树</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#定义"><span class="nav-number">1.4.1.3.1.</span> <span class="nav-text">定义</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#平衡二叉树"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">平衡二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#定义-1"><span class="nav-number">1.4.1.4.1.</span> <span class="nav-text">定义</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二叉树性质"><span class="nav-number">1.4.2.</span> <span class="nav-text">二叉树性质</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#性质1-在二叉树的第-i-层上至多有-2-i-1-个-结点-i-gt-1"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">性质1 在二叉树的第 i 层上至多有 2^(i-1)个 结点(i&gt;=1)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性质2-深度为k的二叉树至多有2-k-1个结点-k≥1-。"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">性质2 深度为k的二叉树至多有2^k-1个结点(k≥1)。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性质3-在任意-棵二叉树中，若终端结点的个数为n0，度为2的结点数为n2，则no-n2-1。"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">性质3 在任意-棵二叉树中，若终端结点的个数为n0，度为2的结点数为n2，则no=n2+1。</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二叉树遍历"><span class="nav-number">1.4.3.</span> <span class="nav-text">二叉树遍历</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

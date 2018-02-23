@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,进击的Java新人," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Author: Harry 一、单链表说到链表，我们可以结合数组的一些特性进行分析。数组和链表都有各自的特性，下面我们就先从数组的一些局限性进行分析。 数组基本的数组操作我就不再讲了，我们可以定义一个大小为5的数组a，然后初始化一些数据a[0]=1，a[1]=2，a[2]=3，如图。  现在想要在数组的第三个位置插入一个数，这时数组执行的操作将a[2]的数据拿出，然后再插入到a[3],最后将数据插">
+<meta name="keywords" content="Java,进击的Java新人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构:链表(进击的Java新人Week.4学习笔记)">
+<meta property="og:url" content="https://ouriris.github.io/2017/12/08/2017-12-08-link-list/index.html">
+<meta property="og:site_name" content="OurIris">
+<meta property="og:description" content="Author: Harry 一、单链表说到链表，我们可以结合数组的一些特性进行分析。数组和链表都有各自的特性，下面我们就先从数组的一些局限性进行分析。 数组基本的数组操作我就不再讲了，我们可以定义一个大小为5的数组a，然后初始化一些数据a[0]=1，a[1]=2，a[2]=3，如图。  现在想要在数组的第三个位置插入一个数，这时数组执行的操作将a[2]的数据拿出，然后再插入到a[3],最后将数据插">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/array.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/array2.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/link1.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/link2.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/link3.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/colection.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue1.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue2.png?raw=true">
+<meta property="og:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue3.png?raw=true">
+<meta property="og:updated_time" content="2018-02-23T09:31:16.757Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据结构:链表(进击的Java新人Week.4学习笔记)">
+<meta name="twitter:description" content="Author: Harry 一、单链表说到链表，我们可以结合数组的一些特性进行分析。数组和链表都有各自的特性，下面我们就先从数组的一些局限性进行分析。 数组基本的数组操作我就不再讲了，我们可以定义一个大小为5的数组a，然后初始化一些数据a[0]=1，a[1]=2，a[2]=3，如图。  现在想要在数组的第三个位置插入一个数，这时数组执行的操作将a[2]的数据拿出，然后再插入到a[3],最后将数据插">
+<meta name="twitter:image" content="https://github.com/harryhe1994/imagemakdown/blob/master/image/array.png?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ouriris.github.io/2017/12/08/2017-12-08-link-list/"/>
+
+
+
+
+
+  <title>数据结构:链表(进击的Java新人Week.4学习笔记) | OurIris</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">OurIris</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Good good study</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/12/08/2017-12-08-link-list/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据结构:链表(进击的Java新人Week.4学习笔记)</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-08T08:52:32+08:00">
+                2017-12-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Author: Harry</p>
+<h2 id="一、单链表"><a href="#一、单链表" class="headerlink" title="一、单链表"></a>一、单链表</h2><pre><code>说到链表，我们可以结合数组的一些特性进行分析。数组和链表都有各自的特性，下面我们就先从数组的一些局限性进行分析。
+</code></pre><h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><pre><code>基本的数组操作我就不再讲了，我们可以定义一个大小为5的数组a，然后初始化一些数据a[0]=1，a[1]=2，a[2]=3，如图。
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/array.png?raw=true" alt="image"></p>
+<pre><code>现在想要在数组的第三个位置插入一个数，这时数组执行的操作将a[2]的数据拿出，然后再插入到a[3],最后将数据插入a[2]。
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/array2.png?raw=true" alt="image"></p>
+<pre><code>如果插入数据时发现数组的容量已经满了，这时操作就更加麻烦了，需要初始化一个更加大容量的数组将原有的数据拷贝到新数组，然后再执行插入操作。
+这里只说了插入操作，同样的删除操作也是一个麻烦的事情。这时候我们就可以使用链表进行操作，可以体现出链表的优势。
+</code></pre><h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><pre><code>通过上面看到一些数组的局限性，从而我们就想有没有什么方法可以避免数组的容量局限性。
+这样我们就想到了链表，链表可以快速的实现增删改操作而不必关注扩容问题,链表的概念我就不过多赘述了，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/link1.png?raw=true" alt="image"></p>
+<pre><code>在链表中插入一项：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/link2.png?raw=true" alt="image"></p>
+<pre><code>首先来看一下我定义的一个单链表节点：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class Node &#123;</span><br><span class="line">    private int data;</span><br><span class="line">    private Node next;</span><br><span class="line">    public Node(int data)&#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getData() &#123;</span><br><span class="line">        return data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setData(int data) &#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Node getNext() &#123;</span><br><span class="line">        return next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setNext(Node next) &#123;</span><br><span class="line">        this.next = next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>这是一个简单的链表结构，包含的内容有data和next，后面会讲到双链表和泛型的结合使用。
+这里是单链表的一些简单操作：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">import singlelink.module.Node;</span><br><span class="line"></span><br><span class="line">public class SingleLink &#123;</span><br><span class="line">    public int size;</span><br><span class="line">    private Node first;</span><br><span class="line">    private Node last;</span><br><span class="line"></span><br><span class="line">    public SingleLink()&#123;</span><br><span class="line">        size = 0;</span><br><span class="line">        this.first = null;</span><br><span class="line">        this.last = null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertLast(int data)&#123;</span><br><span class="line">        if(this.first == null)&#123;</span><br><span class="line">            first = new Node(data);</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node node = new Node(data);</span><br><span class="line">            last.setNext(node);</span><br><span class="line">            last = node;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertFirst(int data)&#123;</span><br><span class="line">        if(first == null)&#123;</span><br><span class="line">            first = new Node(data);</span><br><span class="line">            last = first;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node node = new Node(data);</span><br><span class="line">            node.setNext(first);</span><br><span class="line">            first = node;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertByIndex(int index, int data)&#123;</span><br><span class="line">        if(index &gt; (size + 1) || index &lt; 1 )&#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;else if(index == 1)&#123;</span><br><span class="line">            insertFirst(data);</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node node = new Node(data);</span><br><span class="line">            Node tmp = first;</span><br><span class="line">            for(int i = 1; i &lt; index - 1; i++ )&#123;</span><br><span class="line">                tmp = tmp.getNext();</span><br><span class="line">            &#125;</span><br><span class="line">            node.setNext(tmp.getNext());</span><br><span class="line">            tmp.setNext(node);</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return  true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean deleteByIndex(int index)&#123;</span><br><span class="line">        if(index &gt; size || index &lt;= 0)&#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;else if(index == 1)&#123;</span><br><span class="line">            Node node = first.getNext();</span><br><span class="line">            first = node;</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">            Node tmp = first;</span><br><span class="line">            for(int i = 1; i &lt;= index - 2; i++)&#123;</span><br><span class="line">                tmp = tmp.getNext();</span><br><span class="line">            &#125;</span><br><span class="line">            tmp.setNext(tmp.getNext().getNext());</span><br><span class="line">        &#125;</span><br><span class="line">        size--;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean queryData(int data)&#123;</span><br><span class="line">        Node temp = first;</span><br><span class="line">        int index = 1;</span><br><span class="line">        while (temp != null)&#123;</span><br><span class="line">            if(temp.getData() == data)&#123;</span><br><span class="line">                System.out.println(&quot;found data and it index is: &quot; + index);</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">            index++;</span><br><span class="line">            temp = temp.getNext();</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public void display()&#123;</span><br><span class="line">        Node node = first;</span><br><span class="line">        System.out.println(&quot;first -&gt; last :&quot;);</span><br><span class="line">        while (node != null)&#123;</span><br><span class="line">            System.out.print(node.getData() + &quot;-&gt;&quot;);</span><br><span class="line">            node = node.getNext();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>我们可以看到，链表在增删改的时候是比较好操作的，刚好避免了数组这一方面的不足，不用担心扩容的问题。
+但是链表有优势的同时也有不足，在查找的时候，每一次都需要从头到尾遍历一次，使得时间复杂度变高。
+</code></pre><h2 id="二、双链表"><a href="#二、双链表" class="headerlink" title="二、双链表"></a>二、双链表</h2><pre><code>双向链表，顾名思义就是可以通过对当前节点，可以知道上一个节点和下一个节点，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/link3.png?raw=true" alt="image"><br>    链表的节点定如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class Node&lt;T&gt; &#123;</span><br><span class="line">    private Node&lt;T&gt; left;</span><br><span class="line">    private Node&lt;T&gt; right;</span><br><span class="line">    private T data;</span><br><span class="line">    public Node(T data)&#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Node&lt;T&gt; getLeft() &#123;</span><br><span class="line">        return left;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setLeft(Node&lt;T&gt; left) &#123;</span><br><span class="line">        this.left = left;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Node&lt;T&gt; getRight() &#123;</span><br><span class="line">        return right;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setRight(Node&lt;T&gt; right) &#123;</span><br><span class="line">        this.right = right;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public T getData() &#123;</span><br><span class="line">        return data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setData(T data) &#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>这里我使用到了泛型来定义节点，这里同样的含有data，只不过这里的data我没有指定类型，可以方便存储不同类型的数据，在例子中我使用到的是User对象，如下：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private int age;</span><br><span class="line"></span><br><span class="line">    public User(String name, int age)&#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;User&#123;&quot; +</span><br><span class="line">                &quot;name=&apos;&quot; + name + &apos;\&apos;&apos; +</span><br><span class="line">                &quot;, age=&quot; + age +</span><br><span class="line">                &apos;&#125;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>链表中的操作如下：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line">import doublelink.module.Node;</span><br><span class="line">import java.util.Comparator;</span><br><span class="line"></span><br><span class="line">public class DoubleLink&lt;T&gt; &#123;</span><br><span class="line">    private int size;</span><br><span class="line">    private Node&lt;T&gt; first;</span><br><span class="line">    private Node&lt;T&gt; last;</span><br><span class="line">    public DoubleLink()&#123;</span><br><span class="line">        this.size = 0;</span><br><span class="line">        this.first = null;</span><br><span class="line">        this.last = null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getSize() &#123;</span><br><span class="line">        return size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertFirst(T data)&#123;</span><br><span class="line">        if(first == null)&#123;</span><br><span class="line">            first = new Node&lt;T&gt;(data);</span><br><span class="line">            last = first;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node&lt;T&gt; temp = new Node&lt;T&gt;(data);</span><br><span class="line">            temp.setRight(first);</span><br><span class="line">            first.setLeft(temp);</span><br><span class="line">            first = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertLast(T data)&#123;</span><br><span class="line">        if(first == null)&#123;</span><br><span class="line">            first = new Node&lt;T&gt;(data);</span><br><span class="line">            last = first;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node&lt;T&gt; node = new Node&lt;T&gt;(data);</span><br><span class="line">            node.setLeft(last);</span><br><span class="line">            last.setRight(node);</span><br><span class="line">            last = node;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public T queryData(int index)&#123;</span><br><span class="line">        if(index &lt; 1 || index &gt;size)&#123;</span><br><span class="line">            System.out.println(&quot;You input index invalid!&quot;);</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        else if(index == 1)&#123;</span><br><span class="line">            return first.getData();</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node&lt;T&gt; temp = first;</span><br><span class="line">            for(int i = 1; i &lt;= index - 1; i++)&#123;</span><br><span class="line">                temp = temp.getRight();</span><br><span class="line">            &#125;</span><br><span class="line">            return temp.getData();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void display()&#123;</span><br><span class="line">        Node&lt;T&gt; node = first;</span><br><span class="line">        while (node != null)&#123;</span><br><span class="line">            System.out.print(node.getData().toString() + &quot;-&gt;&quot;);</span><br><span class="line">            node = node.getRight();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean remove(Object o) &#123;</span><br><span class="line">        if (o == null) &#123;</span><br><span class="line">            for (Node&lt;T&gt; x = first; x != null; x = x.getRight()) &#123;</span><br><span class="line">                if (x.getData() == null) &#123;</span><br><span class="line">                    unlink(x);</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            for (Node&lt;T&gt; x = first; x != null; x = x.getRight()) &#123;</span><br><span class="line">                if (o.equals(x.getData())) &#123;</span><br><span class="line">                    unlink(x);</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean removeFirst()&#123;</span><br><span class="line">        if(size &gt; 0)&#123;</span><br><span class="line">            unlink(first);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean removeLast()&#123;</span><br><span class="line">        if(size &gt; 0)&#123;</span><br><span class="line">            unlink(last);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    T unlink(Node&lt;T&gt; x) &#123;</span><br><span class="line">        final T element = x.getData();</span><br><span class="line">        final Node&lt;T&gt; right = x.getRight();</span><br><span class="line">        final Node&lt;T&gt; left = x.getLeft();</span><br><span class="line"></span><br><span class="line">        if (left == null) &#123;</span><br><span class="line">            first = right;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            left.setRight(right);</span><br><span class="line">            x.setLeft(null);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (right == null) &#123;</span><br><span class="line">            last = left;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            right.setLeft(left);</span><br><span class="line">            x.setRight(null);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        x.setData(null);</span><br><span class="line">        size--;</span><br><span class="line">        return element;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public T removeByComparator(T data,Comparator&lt;T&gt; comparator)&#123;</span><br><span class="line">        if(comparator == null)&#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            for (Node&lt;T&gt; x = first; x != null; x = x.getRight()) &#123;</span><br><span class="line">                if (comparator.compare(data, x.getData()) == 0) &#123;</span><br><span class="line">                    return unlink(x);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>我需要讲一下的是remove操作，这里我使用了两种remove的方法，一种的仿照JDK的remove方法，是通过equal比较对象是否为同一个，然后再删除，这个需要查找到已经存在的对象，才能删除。
+另外一种是我使用了Comparator接口，重写了compare方法，从而使得删除数据更加灵活，只需要写一个比较器传入就可以remove了。
+
+这里写了两个比较器，一个是比较所有内容，另外一个只比较名字，可以根据需求定义不同的比较器，灵活性更好。
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class UserAllInfoComparator implements Comparator&lt;User&gt; &#123;</span><br><span class="line">    public int compare(User user1, User user2) &#123;</span><br><span class="line">        if(user1.getName().equals(user2.getName()) &amp;&amp; user1.getAge() == user2.getAge())&#123;</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class UserNameComparator implements Comparator&lt;User&gt; &#123;</span><br><span class="line">    public int compare(User user1, User user2) &#123;</span><br><span class="line">        if(user1.getName().equals(user2.getName()))&#123;</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="三、队列"><a href="#三、队列" class="headerlink" title="三、队列"></a>三、队列</h2><pre><code>说到队列，我们大概来看一下Java中容器的关系，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/colection.png?raw=true" alt="image"></p>
+<h3 id="单向队列"><a href="#单向队列" class="headerlink" title="单向队列"></a>单向队列</h3><pre><code>单向队列是单向的，只能从一边进来，另一边出去，而且是先进先出，与栈刚好相反。我们可以用数组模拟，也可以用链表实现。其原理如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue1.png?raw=true" alt="image"></p>
+<h3 id="双向队列"><a href="#双向队列" class="headerlink" title="双向队列"></a>双向队列</h3><pre><code>双向队列可以重两边进来，同样可以从两边出去，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue2.png?raw=true" alt="image"></p>
+<h3 id="循环队列"><a href="#循环队列" class="headerlink" title="循环队列"></a>循环队列</h3><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue3.png?raw=true" alt="image"></p>
+<pre><code>这里有数组实现了一个简单循环队列：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">public class Deque &#123;</span><br><span class="line">    private int[] data;</span><br><span class="line">    private int head;</span><br><span class="line">    private int tail;</span><br><span class="line">    private int length;</span><br><span class="line">    private final static int DEFAULT_SIZE = 10;</span><br><span class="line"></span><br><span class="line">    public int getLength() &#123;</span><br><span class="line">        return length;</span><br><span class="line">    &#125;</span><br><span class="line">    public Deque()&#123;</span><br><span class="line">        data = new int[DEFAULT_SIZE];</span><br><span class="line">        head = 0;</span><br><span class="line">        tail = 0;</span><br><span class="line">        length = 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Deque(int size)&#123;</span><br><span class="line">        if(size &gt; 0)&#123;</span><br><span class="line">            data = new int[size];</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            data = new int[DEFAULT_SIZE];</span><br><span class="line">        &#125;</span><br><span class="line">        head = 0;</span><br><span class="line">        tail = 0;</span><br><span class="line">        length = 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean isFull()&#123;</span><br><span class="line">        return length == data.length;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean isEmpty()&#123;</span><br><span class="line">        return length == 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertLast(int element)&#123;</span><br><span class="line">        if(!isFull())&#123;</span><br><span class="line">            data[tail] = element;</span><br><span class="line">            length++;</span><br><span class="line">            if(!isFull() &amp;&amp; tail &lt;= data.length - 2 &amp;&amp; (tail + 1 != head))&#123;</span><br><span class="line">                tail++;</span><br><span class="line">            &#125;else if(!isFull() &amp;&amp; tail == data.length - 1 &amp;&amp; head != 0)&#123;</span><br><span class="line">                tail = 0;</span><br><span class="line">            &#125;else if(isFull())&#123;</span><br><span class="line">                tail = head;</span><br><span class="line">            &#125;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            System.out.println(&quot;The queue is full!&quot;);</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int removeFirst()&#123;</span><br><span class="line">        if(!isEmpty() &amp;&amp; head &lt; data.length - 1)&#123;</span><br><span class="line">            head++;</span><br><span class="line">            length--;</span><br><span class="line">            return data[head-1];</span><br><span class="line">        &#125;else if(!isEmpty() &amp;&amp; head == data.length - 1)&#123;</span><br><span class="line">            head = 0;</span><br><span class="line">            length--;</span><br><span class="line">            return data[data.length - 1];</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            head = tail;</span><br><span class="line">            System.out.println(&quot;The queue is empty!&quot;);</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>其实队列的实现使用链表比使用数组好很多，读者可以自己用链表实现一下。
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/进击的Java新人/" rel="tag"># 进击的Java新人</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/04/2017-12-04-stack-data-structure/" rel="next" title="数据结构:栈(进击的Java新人Week.2学习笔记)">
+                <i class="fa fa-chevron-left"></i> 数据结构:栈(进击的Java新人Week.2学习笔记)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/08/2018-01-08-AVL-tree/" rel="prev" title="数据结构:AVL树(进击的Java新人Week.6学习笔记)">
+                数据结构:AVL树(进击的Java新人Week.6学习笔记) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <a href="/about">
+            <img class="site-author-image" itemprop="image"
+                 src="/uploads/avatar.jpg"
+                 alt="" />
+          </a>
+          <a href="/about">
+            <p class="site-author-name" itemprop="name"></p>
+          </a>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、单链表"><span class="nav-number">1.</span> <span class="nav-text">一、单链表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数组"><span class="nav-number">1.1.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链表"><span class="nav-number">1.2.</span> <span class="nav-text">链表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、双链表"><span class="nav-number">2.</span> <span class="nav-text">二、双链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、队列"><span class="nav-number">3.</span> <span class="nav-text">三、队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单向队列"><span class="nav-number">3.1.</span> <span class="nav-text">单向队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双向队列"><span class="nav-number">3.2.</span> <span class="nav-text">双向队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#循环队列"><span class="nav-number">3.3.</span> <span class="nav-text">循环队列</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

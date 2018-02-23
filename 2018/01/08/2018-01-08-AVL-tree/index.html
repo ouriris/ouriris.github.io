@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,进击的Java新人," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Author: Mike 问题背景时间复杂度  平衡二叉树基于二叉查找树的特性，在查找的过程中，在每一层只会访问一个结点，也即平衡二叉树的时间复杂度与树的高度有关。对于一颗 满二叉树，时间复杂度为      故 O(n) = logN;   树的层数越少，查找数据的平均查找时间就会越少   平衡二叉树是具有以下性质的二叉查找树：对于树中的任意一个结点，都有该结点的左子树的高度与右子树的高度之差的绝">
+<meta name="keywords" content="Java,进击的Java新人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构:AVL树(进击的Java新人Week.6学习笔记)">
+<meta property="og:url" content="https://ouriris.github.io/2018/01/08/2018-01-08-AVL-tree/index.html">
+<meta property="og:site_name" content="OurIris">
+<meta property="og:description" content="Author: Mike 问题背景时间复杂度  平衡二叉树基于二叉查找树的特性，在查找的过程中，在每一层只会访问一个结点，也即平衡二叉树的时间复杂度与树的高度有关。对于一颗 满二叉树，时间复杂度为      故 O(n) = logN;   树的层数越少，查找数据的平均查找时间就会越少   平衡二叉树是具有以下性质的二叉查找树：对于树中的任意一个结点，都有该结点的左子树的高度与右子树的高度之差的绝">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/A77E8A066F97480ABB84FEE8D10055FF/12188">
+<meta property="og:image" content="https://camo.githubusercontent.com/62bab5658be3d287b7b002a2b8473f8d735e9784/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f44354332343330423236373934313641384446344632364541373735344445342f3132323132">
+<meta property="og:image" content="https://camo.githubusercontent.com/e578974e8056404ada9fce1534e637baba3db314/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f41393231423433423241373134364342414341334544323337354439463339302f3132323331">
+<meta property="og:image" content="https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=32debc79b6de9c82b268f1dd0de8eb6f/4bed2e738bd4b31c2787ccfb82d6277f9e2ff833.jpg">
+<meta property="og:image" content="http://img.blog.csdn.net/20151225154426299?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20151225155207258?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="https://camo.githubusercontent.com/4586cb287b9439e85e4dad4e380d85444839d141/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f41373135463143333142414134334346423742323046454630303837394530372f3132323933">
+<meta property="og:image" content="http://img.blog.csdn.net/20151225155001696?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="https://camo.githubusercontent.com/2a2d6d4c4c617db9756acf391c36738eb2f71e8d/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f43434134424335333837343534394133394134334443353238463632433435342f3132333136">
+<meta property="og:image" content="http://img.blog.csdn.net/20151225155455361?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/3B31A11B870245A5A18AFB41246DA1FE/12345">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/A4A3F0E6598E4D8C9ED5542A70E90B4C/12347">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/BF277577705F449BA4CAE1B372BA8EAE/12349">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/35D5BA6C7F4846CC81376720E628BFB7/12351">
+<meta property="og:updated_time" content="2018-02-23T09:31:16.757Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据结构:AVL树(进击的Java新人Week.6学习笔记)">
+<meta name="twitter:description" content="Author: Mike 问题背景时间复杂度  平衡二叉树基于二叉查找树的特性，在查找的过程中，在每一层只会访问一个结点，也即平衡二叉树的时间复杂度与树的高度有关。对于一颗 满二叉树，时间复杂度为      故 O(n) = logN;   树的层数越少，查找数据的平均查找时间就会越少   平衡二叉树是具有以下性质的二叉查找树：对于树中的任意一个结点，都有该结点的左子树的高度与右子树的高度之差的绝">
+<meta name="twitter:image" content="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/A77E8A066F97480ABB84FEE8D10055FF/12188">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ouriris.github.io/2018/01/08/2018-01-08-AVL-tree/"/>
+
+
+
+
+
+  <title>数据结构:AVL树(进击的Java新人Week.6学习笔记) | OurIris</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">OurIris</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Good good study</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/01/08/2018-01-08-AVL-tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据结构:AVL树(进击的Java新人Week.6学习笔记)</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-08T10:11:06+08:00">
+                2018-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Author: Mike</p>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/A77E8A066F97480ABB84FEE8D10055FF/12188" alt="image"></p>
+<ul>
+<li>平衡二叉树基于二叉查找树的特性，在查找的过程中，在每一层只会访问一个结点，也即平衡二叉树的时间复杂度与树的高度有关。<br>对于一颗 <strong>满二叉树</strong>，时间复杂度为</li>
+</ul>
+<blockquote>
+<p><img src="https://camo.githubusercontent.com/62bab5658be3d287b7b002a2b8473f8d735e9784/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f44354332343330423236373934313641384446344632364541373735344445342f3132323132" alt="image"></p>
+</blockquote>
+<blockquote>
+<p>故 <strong>O(n) = logN</strong>;</p>
+</blockquote>
+<ul>
+<li>树的层数越少，查找数据的平均查找时间就会越少<blockquote>
+<p>  平衡二叉树是具有以下性质的二叉查找树：对于树中的任意一个结点，都有该结点的左子树的高度与右子树的高度之差的绝对值小于2。与普通的BST相比，AVL树只是多定义了旋转操作，使得当左右子树的<strong>高度差的绝对值大于或者等于2时</strong>，平衡树可以<strong>自动地进行树形调整</strong>，以重新满足上述性质。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><p>当所给予的关键字序列是有顺序的时候，将会出现如下尴尬的二叉树。树的结构会变为单向左子树或者单向右子树，二叉树退化为单向链表，时间复杂度为 <strong>O(n)</strong>，<br><img src="https://camo.githubusercontent.com/e578974e8056404ada9fce1534e637baba3db314/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f41393231423433423241373134364342414341334544323337354439463339302f3132323331" alt="image"></p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><blockquote>
+<p>尽可能降低树的高度，主要是通过二叉树的旋转来达到降低树高度的目的，也就是接下来讨论的内容。</p>
+</blockquote>
+<h1 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h1><p>先来看几个概念</p>
+<h2 id="平衡因子"><a href="#平衡因子" class="headerlink" title="平衡因子"></a><a href="https://baike.baidu.com/item/%E5%B9%B3%E8%A1%A1%E5%9B%A0%E5%AD%90/234504?fr=aladdin" target="_blank" rel="noopener">平衡因子</a></h2><blockquote>
+<p>某结点的 <strong>左子树</strong> 与 <strong>右子树</strong> 的高度(深度) 差 即为该结点的<strong>平衡因子</strong>（BF,Balance Factor）。平衡二叉树上所有结点的平衡因子只可能是 <strong>-1，0 或 1</strong>。<br>举例子如下, 结点旁边数据即为平衡因子</p>
+</blockquote>
+<p><img src="https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=32debc79b6de9c82b268f1dd0de8eb6f/4bed2e738bd4b31c2787ccfb82d6277f9e2ff833.jpg" alt="image"></p>
+<h2 id="最小不平衡子树"><a href="#最小不平衡子树" class="headerlink" title="最小不平衡子树"></a>最小不平衡子树</h2><blockquote>
+<p>最小不平衡子树以离插入结点最近、且平衡因子绝对值大于 1 的结点作根结点的子树。</p>
+</blockquote>
+<h2 id="结点失衡"><a href="#结点失衡" class="headerlink" title="结点失衡"></a><a href="http://blog.csdn.net/lemon_tree12138/article/details/50393548" target="_blank" rel="noopener">结点失衡</a></h2><p>调整失衡结点的手段为旋转操作，一共有日下四种旋转</p>
+<ul>
+<li><p><strong>LL</strong> 在结点A的左孩子（L）的左子树（L）插入新结点导致不平衡 –&gt; LL单右旋操作<br><img src="http://img.blog.csdn.net/20151225154426299?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+</li>
+<li><p><strong>RR</strong> 在结点A的右孩子（R）的右子树（R）插入新结点导致不平衡 –&gt; RR单左旋操作<br><img src="http://img.blog.csdn.net/20151225155207258?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+</li>
+<li><p><strong>LR</strong> 在结点A的左孩子（L）的右子树（R）插入新结点导致不平衡 –&gt; LR旋转。<br>可以先假设在D结点有一个右孩子，为null，也即虚构的右孩子，由此可见 <strong>LR 旋转 = LL旋转 + RR旋转</strong></p>
+</li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/4586cb287b9439e85e4dad4e380d85444839d141/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f41373135463143333142414134334346423742323046454630303837394530372f3132323933" alt="image"></p>
+<p>具体例子</p>
+<p><img src="http://img.blog.csdn.net/20151225155001696?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<ul>
+<li><strong>RL</strong> 在结点A的右孩子（R）的左子树（L）插入新结点导致不平衡 –&gt; RL旋转，与LR旋转的理论类似，<strong>RL 旋转 = RR旋转 + LL旋转</strong></li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/2a2d6d4c4c617db9756acf391c36738eb2f71e8d/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f43434134424335333837343534394133394134334443353238463632433435342f3132333136" alt="image"></p>
+<p>具体例子<br><img src="http://img.blog.csdn.net/20151225155455361?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<h1 id="操作"><a href="#操作" class="headerlink" title="操作"></a><a href="http://blog.csdn.net/javazejian/article/details/53892797" target="_blank" rel="noopener">操作</a></h1><p>平衡二叉树的增删查改操作<br><a href="https://zhuanlan.zhihu.com/p/25320155?refer=hinus" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/25320155?refer=hinus</a></p>
+<h2 id="结点定义"><a href="#结点定义" class="headerlink" title="结点定义"></a>结点定义</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AVLNode</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Comparable</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> AVLNode&lt;T&gt; left;</span><br><span class="line">    <span class="keyword">public</span> AVLNode&lt;T&gt; right;</span><br><span class="line">    <span class="keyword">public</span> T data;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> height;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AVLNode</span><span class="params">(T data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.data = data;</span><br><span class="line">        <span class="keyword">this</span>.left = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">this</span>.right = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">this</span>.height = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="LL"><a href="#LL" class="headerlink" title="LL"></a>LL</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/3B31A11B870245A5A18AFB41246DA1FE/12345" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 左左单旋转(LL旋转) w变为x的根结点, x变为w的右子树</span><br><span class="line">     *</span><br><span class="line">     * @param x</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private AVLNode&lt;T&gt; singleRotateLeft(AVLNode&lt;T&gt; x) &#123;</span><br><span class="line">        //把w结点旋转为根结点</span><br><span class="line">        AVLNode&lt;T&gt; w = x.left;</span><br><span class="line">        //同时w的右子树变为x的左子树</span><br><span class="line">        x.left = w.right;</span><br><span class="line">        //x变为w的右子树</span><br><span class="line">        w.right = x;</span><br><span class="line">        //重新计算x/w的高度</span><br><span class="line">        x.height = Math.max(height(x.left), height(x.right)) + 1;</span><br><span class="line">        w.height = Math.max(height(w.left), x.height) + 1;</span><br><span class="line">        return w;//返回新的根结点</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="RR"><a href="#RR" class="headerlink" title="RR"></a>RR</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/A4A3F0E6598E4D8C9ED5542A70E90B4C/12347" alt="image"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 右右单旋转(RR旋转) x变为w的根结点, w变为x的左子树</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private AVLNode&lt;T&gt; singleRotateRight(AVLNode&lt;T&gt; w) &#123;</span><br><span class="line"></span><br><span class="line">        AVLNode&lt;T&gt; x = w.right;</span><br><span class="line"></span><br><span class="line">        w.right = x.left;</span><br><span class="line">        x.left = w;</span><br><span class="line"></span><br><span class="line">        //重新计算x/w的高度</span><br><span class="line">        x.height = Math.max(height(x.left), w.height) + 1;</span><br><span class="line">        w.height = Math.max(height(w.left), height(w.right)) + 1;</span><br><span class="line"></span><br><span class="line">        //返回新的根结点</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="LR"><a href="#LR" class="headerlink" title="LR"></a>LR</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/BF277577705F449BA4CAE1B372BA8EAE/12349" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 左右旋转(LR旋转) x(根) w y 结点 把y变成根结点</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">private AVLNode&lt;T&gt; doubleRotateWithLeft(AVLNode&lt;T&gt; x)&#123;</span><br><span class="line">    //w先进行RR旋转</span><br><span class="line">    x.left=singleRotateRight(x.left);</span><br><span class="line">    //再进行x的LL旋转</span><br><span class="line">    return singleRotateLeft(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="RL"><a href="#RL" class="headerlink" title="RL"></a>RL</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/35D5BA6C7F4846CC81376720E628BFB7/12351" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 右左旋转(RL旋转)</span><br><span class="line"> * @param w</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">private AVLNode&lt;T&gt; doubleRotateWithRight(AVLNode&lt;T&gt; x)&#123;</span><br><span class="line">    //先进行LL旋转</span><br><span class="line">    x.right=singleRotateLeft(x.right);</span><br><span class="line">    //再进行RR旋转</span><br><span class="line">    return singleRotateRight(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h2><blockquote>
+<p>与BST（二叉查找树）的插入实现原理一样，使用递归算法，根据值大小查找到插入位置，然后进行插入操作，插入完成后，我们需要进行平衡判断，评估子树是否需要进行平衡修复，需要则利用上述的四种情景套入代码即可，最后要记得重新计算插入结点路径上的高度</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">* 插入方法</span><br><span class="line">* @param data</span><br><span class="line">*/</span><br><span class="line">@Override</span><br><span class="line">public void insert(T data) &#123;</span><br><span class="line">   if (data==null)&#123;</span><br><span class="line">       throw new RuntimeException(&quot;data can\&apos;t not be null &quot;);</span><br><span class="line">   &#125;</span><br><span class="line">   this.root=insert(data,root);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private AVLNode&lt;T&gt; insert(T data , AVLNode&lt;T&gt; p)&#123;</span><br><span class="line"></span><br><span class="line">   //说明已没有孩子结点,可以创建新结点插入了.</span><br><span class="line">   if(p==null)&#123;</span><br><span class="line">       p=new AVLNode&lt;T&gt;(data);</span><br><span class="line">   &#125;else if(data.compareTo(p.data)&lt;0)&#123;//向左子树寻找插入位置</span><br><span class="line">       p.left=insert(data,p.left);</span><br><span class="line"></span><br><span class="line">       //插入后计算子树的高度,等于2则需要重新恢复平衡,由于是左边插入,左子树的高度肯定大于等于右子树的高度</span><br><span class="line">       if(height(p.left)-height(p.right)==2)&#123;</span><br><span class="line">           //判断data是插入点的左孩子还是右孩子</span><br><span class="line">           if(data.compareTo(p.left.data)&lt;0)&#123;</span><br><span class="line">               //进行LL旋转</span><br><span class="line">               p=singleRotateLeft(p);</span><br><span class="line">           &#125;else &#123;</span><br><span class="line">               //进行左右旋转</span><br><span class="line">               p=doubleRotateWithLeft(p);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;else if (data.compareTo(p.data)&gt;0)&#123;//向右子树寻找插入位置</span><br><span class="line">       p.right=insert(data,p.right);</span><br><span class="line"></span><br><span class="line">       if(height(p.right)-height(p.left)==2)&#123;</span><br><span class="line">           if (data.compareTo(p.right.data)&lt;0)&#123;</span><br><span class="line">               //进行右左旋转</span><br><span class="line">               p=doubleRotateWithRight(p);</span><br><span class="line">           &#125;else &#123;</span><br><span class="line">               p=singleRotateRight(p);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   else</span><br><span class="line">    ;//if exist do nothing</span><br><span class="line">   //重新计算各个结点的高度</span><br><span class="line">   p.height = Math.max( height( p.left ), height( p.right ) ) + 1;</span><br><span class="line"></span><br><span class="line">   return p;//返回根结点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/进击的Java新人/" rel="tag"># 进击的Java新人</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/08/2017-12-08-link-list/" rel="next" title="数据结构:链表(进击的Java新人Week.4学习笔记)">
+                <i class="fa fa-chevron-left"></i> 数据结构:链表(进击的Java新人Week.4学习笔记)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/08/2018-01-08-tree-and-binary-tree/" rel="prev" title="数据结构:树和二叉树(进击的Java新人Week.6学习笔记)">
+                数据结构:树和二叉树(进击的Java新人Week.6学习笔记) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <a href="/about">
+            <img class="site-author-image" itemprop="image"
+                 src="/uploads/avatar.jpg"
+                 alt="" />
+          </a>
+          <a href="/about">
+            <p class="site-author-name" itemprop="name"></p>
+          </a>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#时间复杂度"><span class="nav-number">1.1.</span> <span class="nav-text">时间复杂度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存在的问题"><span class="nav-number">1.2.</span> <span class="nav-text">存在的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">1.3.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#旋转"><span class="nav-number">2.</span> <span class="nav-text">旋转</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#平衡因子"><span class="nav-number">2.1.</span> <span class="nav-text">平衡因子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最小不平衡子树"><span class="nav-number">2.2.</span> <span class="nav-text">最小不平衡子树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结点失衡"><span class="nav-number">2.3.</span> <span class="nav-text">结点失衡</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#操作"><span class="nav-number">3.</span> <span class="nav-text">操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#结点定义"><span class="nav-number">3.1.</span> <span class="nav-text">结点定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LL"><span class="nav-number">3.2.</span> <span class="nav-text">LL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RR"><span class="nav-number">3.3.</span> <span class="nav-text">RR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LR"><span class="nav-number">3.4.</span> <span class="nav-text">LR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RL"><span class="nav-number">3.5.</span> <span class="nav-text">RL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入"><span class="nav-number">3.6.</span> <span class="nav-text">插入</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

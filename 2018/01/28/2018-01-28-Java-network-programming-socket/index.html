@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,进击的Java新人," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Author: Jonas Yu 目录 Socket介绍 基于Socket的Java网络编程 分层网络协议  Socket介绍网络上两个程序通过一个双向的通讯链接实现数据交换，这个双向链路的一端称为一个Socket。Socket通常用来实现客户端和服务器端的通信,在Internet上的主机一般会运行多个服务软件，软件一旦需要跟互联网上其他计算机之间通信，就需要通过Socket来绑定到一个端口，这个">
+<meta name="keywords" content="Java,进击的Java新人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java网络编程之Socket篇">
+<meta property="og:url" content="https://ouriris.github.io/2018/01/28/2018-01-28-Java-network-programming-socket/index.html">
+<meta property="og:site_name" content="OurIris">
+<meta property="og:description" content="Author: Jonas Yu 目录 Socket介绍 基于Socket的Java网络编程 分层网络协议  Socket介绍网络上两个程序通过一个双向的通讯链接实现数据交换，这个双向链路的一端称为一个Socket。Socket通常用来实现客户端和服务器端的通信,在Internet上的主机一般会运行多个服务软件，软件一旦需要跟互联网上其他计算机之间通信，就需要通过Socket来绑定到一个端口，这个">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/week8/osi_tcp_ip.jpg">
+<meta property="og:updated_time" content="2018-02-23T09:31:16.760Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java网络编程之Socket篇">
+<meta name="twitter:description" content="Author: Jonas Yu 目录 Socket介绍 基于Socket的Java网络编程 分层网络协议  Socket介绍网络上两个程序通过一个双向的通讯链接实现数据交换，这个双向链路的一端称为一个Socket。Socket通常用来实现客户端和服务器端的通信,在Internet上的主机一般会运行多个服务软件，软件一旦需要跟互联网上其他计算机之间通信，就需要通过Socket来绑定到一个端口，这个">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/week8/osi_tcp_ip.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ouriris.github.io/2018/01/28/2018-01-28-Java-network-programming-socket/"/>
+
+
+
+
+
+  <title>Java网络编程之Socket篇 | OurIris</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">OurIris</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Good good study</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/01/28/2018-01-28-Java-network-programming-socket/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Java网络编程之Socket篇</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-28T18:26:04+08:00">
+                2018-01-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Author: Jonas Yu</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li>Socket介绍</li>
+<li>基于Socket的Java网络编程</li>
+<li>分层网络协议</li>
+</ul>
+<h2 id="Socket介绍"><a href="#Socket介绍" class="headerlink" title="Socket介绍"></a>Socket介绍</h2><p>网络上两个程序通过一个双向的通讯链接实现数据交换，这个双向链路的一端称为一个Socket。Socket通常用来实现客户端和服务器端的通信,在Internet上的主机一般会运行多个服务软件，软件一旦需要跟互联网上其他计算机之间通信，就需要通过Socket来绑定到一个端口，这个端口则是计算机用来标识对应的Socket进行数据传递。一个Socket由一个IP地址和一个端口唯一确定。</p>
+<h2 id="基于Socket的Java网络编程"><a href="#基于Socket的Java网络编程" class="headerlink" title="基于Socket的Java网络编程"></a>基于Socket的Java网络编程</h2><p>基于TCP通讯过程<br>通常情况下，服务端的Socket会监听某个端口是否有连接请求，当服务端接收到客户端的连接请求时，会向客户端发送接收的消息，这样一个连接就建立了。客户端与服务端都可以通过Socket进行数据通信。</p>
+<p>Java的网络编程的接口大多数位于 java.net 和 java.nio 这两个package里，掌握这两个package是Java程序员必备的基础技能。Java.net中提供了两个类Socket和ServerSocket，分别用来表示双向连接的客户端和服务端。</p>
+<p>下面是使用Socket跟ServerSocket来实现简单的C/S程序代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Server</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">        ServerSocket ss = <span class="keyword">new</span> ServerSocket(<span class="number">8000</span>);</span><br><span class="line">        System.out.println(<span class="string">"Accept start *** "</span>);</span><br><span class="line">        Socket conn = ss.accept();</span><br><span class="line">        System.out.println(<span class="string">"Accept in progress "</span>);</span><br><span class="line">        BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(conn.getInputStream()));</span><br><span class="line">        BufferedWriter bw = <span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> OutputStreamWriter(conn.getOutputStream()));</span><br><span class="line">        String s = br.readLine();</span><br><span class="line">        <span class="keyword">while</span> (s != <span class="keyword">null</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"Receive: "</span> + s);</span><br><span class="line">            Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">            bw.write(s.toUpperCase() + <span class="string">"\n"</span>);</span><br><span class="line">            bw.flush();</span><br><span class="line">            System.out.println(<span class="string">"Send: "</span> + s.toUpperCase());</span><br><span class="line">            s = br.readLine();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        br.close();</span><br><span class="line">        bw.close();</span><br><span class="line">        conn.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">        Socket conn = <span class="keyword">new</span> Socket(<span class="string">"127.0.0.1"</span>, <span class="number">8000</span>);</span><br><span class="line">        BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(conn.getInputStream()));</span><br><span class="line">        BufferedWriter bw = <span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> OutputStreamWriter(conn.getOutputStream()));</span><br><span class="line">        System.out.println(<span class="string">"conn server success !"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">        bw.write(<span class="string">"hello\n"</span>);</span><br><span class="line">        bw.flush();</span><br><span class="line">        System.out.println(<span class="string">"hello has been send."</span>);</span><br><span class="line">        String s = br.readLine();</span><br><span class="line">        System.out.println(s);</span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">        bw.write(<span class="string">"world\n"</span>);</span><br><span class="line">        bw.flush();</span><br><span class="line">        System.out.println(<span class="string">"world has been send."</span>);</span><br><span class="line">        s = br.readLine();</span><br><span class="line">        System.out.println(s);</span><br><span class="line">        br.close();</span><br><span class="line">        bw.close();</span><br><span class="line">        conn.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面代码可以看出，Socket通信步骤如下:</p>
+<ol>
+<li>服务端通过指定端口号实例化ServerSockt对象，调用accept函数阻塞等待连接请求</li>
+<li>客户端通过IP跟端口实例化Socket对象</li>
+<li>客户端跟服务端分别得到一个Socket对象，根据Socket对象，得到对应的输出流跟输入流，通过这两个IO可以进行两个端之间的通信</li>
+</ol>
+<h2 id="分层网络协议"><a href="#分层网络协议" class="headerlink" title="分层网络协议"></a>分层网络协议</h2><p>OSI模型<br>OSI模型是国际标准化组织ISO创立的。这是一个理论模型，并无实际产品完全符合OSI模型。制订OSI模型只是为了分析网络通讯方便而引进的一套理论。也为以后制订实用协议或产品打下基础。OSI模型共分七层：从上至下依次是</p>
+<ul>
+<li>应用层 指网络操作系统和具体的应用程序，对应WWW服务器、FTP服务器等应用软件</li>
+<li>表示层：数据语法的转换、数据的传送等</li>
+<li>会话层：建立起两端之间的会话关系，并负责数据的传送</li>
+<li>传输层：负责错误的检查与修复，以确保传送的质量，是TCP工作的地方。</li>
+<li>网络层：提供了编址方案,IP协议工作的地方(数据包）</li>
+<li>数据链路层：将由物理层传来的未经处理的位数据包装成数据帧</li>
+<li>物理层：对应网线、网卡、接口等物理设备(位)</li>
+</ul>
+<p>TCP/IP四层模型<br>在实际开发中，我们不会使用这种模型，更常用的是TCP/IP协议族的四层模型。<br>这四层模型分别对应的是：</p>
+<ul>
+<li><p>应用层 最上面一层是应用层，负责处理特定的应用程序消息。例如Telnet，Ftp, Http等。</p>
+</li>
+<li><p>传输层 主要为两台主机上的应用程序提供端到端的通信。在 TCP/IP 协议族中，有两种传输协议：TCP（传输控制协议）和UDP（用户数据报协议） 。TCP为两台主机提供高可靠性的数据通信。它所做的工作包括把应用程序交给它的数据分成合适的小块交给下面的网络层，确认接收到的分组，设置发送最后确认分组的超时时钟等。由于运输层提供了高可靠性的端到端的通信，因此应用层可以忽略所有这些细节。另一种传输协议，UDP则为应用层提供一种非常简单的服务。它只是把称作数据报的分组从一台主机发送到另一台主机，但并不保证该数据报能到达另一端。任何必需的可靠性必须由应用层来提供。这两种运输层协议分别在不同的应用程序中有不同的用途。</p>
+</li>
+<li><p>网络层 处理分组在网络中的活动，例如分组的选路。在TCP/IP协议族中，网络层协议包括 IP 协议（网际协议） ，ICMP 协议（Internet互联网控制报文协议） ，以及 IGMP 协议（Internet组管理协议） 。</p>
+</li>
+<li><p>链路层 也称作数据链路层，通常包括操作系统中的设备驱动程序和计算机中对应的网络接口卡。它们一起处理与电缆（或其他任何传输媒介）的物理接口细节。这一层大约相当于OSI模型中的物理层和链路层的总和。</p>
+</li>
+</ul>
+<p>OSI分层模型和TCP/IP分层模型的对应关系：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/week8/osi_tcp_ip.jpg" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/进击的Java新人/" rel="tag"># 进击的Java新人</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/16/2018-01-16-R-B-Tree-Delete/" rel="next" title="数据结构:红黑树的删除(进击的Java新人Week.6学习笔记)">
+                <i class="fa fa-chevron-left"></i> 数据结构:红黑树的删除(进击的Java新人Week.6学习笔记)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <a href="/about">
+            <img class="site-author-image" itemprop="image"
+                 src="/uploads/avatar.jpg"
+                 alt="" />
+          </a>
+          <a href="/about">
+            <p class="site-author-name" itemprop="name"></p>
+          </a>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Socket介绍"><span class="nav-number">2.</span> <span class="nav-text">Socket介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Socket的Java网络编程"><span class="nav-number">3.</span> <span class="nav-text">基于Socket的Java网络编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分层网络协议"><span class="nav-number">4.</span> <span class="nav-text">分层网络协议</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

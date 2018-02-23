@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,进击的Java新人," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Author: Kelvin 注意： 由于红黑树删除相对复杂，看到另一篇博客写的非常好，故本文内容基本来自红黑树删除，代码自己实现) 一、节点命名约定&amp;emsp;D表示要被删除的节点。即：取 Delete 的首字母&amp;emsp;P 表示父节点。即：取 Parent 的首字母&amp;emsp;S表示兄弟姐妹节点。即：取 &amp;emsp;Sibling的首字母&amp;emsp;U表示叔伯节点。即：取Uncle的首字母&amp;">
+<meta name="keywords" content="Java,进击的Java新人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构:红黑树的删除(进击的Java新人Week.6学习笔记)">
+<meta property="og:url" content="https://ouriris.github.io/2018/01/16/2018-01-16-R-B-Tree-Delete/index.html">
+<meta property="og:site_name" content="OurIris">
+<meta property="og:description" content="Author: Kelvin 注意： 由于红黑树删除相对复杂，看到另一篇博客写的非常好，故本文内容基本来自红黑树删除，代码自己实现) 一、节点命名约定&amp;emsp;D表示要被删除的节点。即：取 Delete 的首字母&amp;emsp;P 表示父节点。即：取 Parent 的首字母&amp;emsp;S表示兄弟姐妹节点。即：取 &amp;emsp;Sibling的首字母&amp;emsp;U表示叔伯节点。即：取Uncle的首字母&amp;">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_02.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_03.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_04.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_05.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_07.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_08.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_09.png">
+<meta property="og:updated_time" content="2018-02-23T09:31:16.759Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据结构:红黑树的删除(进击的Java新人Week.6学习笔记)">
+<meta name="twitter:description" content="Author: Kelvin 注意： 由于红黑树删除相对复杂，看到另一篇博客写的非常好，故本文内容基本来自红黑树删除，代码自己实现) 一、节点命名约定&amp;emsp;D表示要被删除的节点。即：取 Delete 的首字母&amp;emsp;P 表示父节点。即：取 Parent 的首字母&amp;emsp;S表示兄弟姐妹节点。即：取 &amp;emsp;Sibling的首字母&amp;emsp;U表示叔伯节点。即：取Uncle的首字母&amp;">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ouriris.github.io/2018/01/16/2018-01-16-R-B-Tree-Delete/"/>
+
+
+
+
+
+  <title>数据结构:红黑树的删除(进击的Java新人Week.6学习笔记) | OurIris</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">OurIris</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Good good study</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/01/16/2018-01-16-R-B-Tree-Delete/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据结构:红黑树的删除(进击的Java新人Week.6学习笔记)</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-16T08:52:32+08:00">
+                2018-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Author: Kelvin</p>
+<p>注意： 由于红黑树删除相对复杂，看到另一篇博客写的非常好，故本文内容基本来自<a href="https://www.cnblogs.com/tongy0/p/5460623.html" target="_blank" rel="noopener">红黑树删除</a>，代码自己实现)</p>
+<h4 id="一、节点命名约定"><a href="#一、节点命名约定" class="headerlink" title="一、节点命名约定"></a>一、节点命名约定</h4><p>&emsp;D表示要被删除的节点。即：取 Delete 的首字母<br>&emsp;P 表示父节点。即：取 Parent 的首字母<br>&emsp;S表示兄弟姐妹节点。即：取 &emsp;Sibling的首字母<br>&emsp;U表示叔伯节点。即：取Uncle的首字母<br>&emsp;G表示祖父节点。即：取 &emsp;Grandfather的首字母<br>&emsp;L表示左树。即：取Left的首字母<br>&emsp;R表示右树。即：取Right的首字母<br>&emsp;Nil表示叶子节点。即所谓的空节点；注意：红黑树中的叶子节点与其他树中所述说的叶子节点不是同一概念。而且红黑树中的叶子节点(即：Nil节点)永远是被定义为黑色的<br><br>下文的节点命名表示将会使用以上这些命名约定或它们的组合表示。因此，请先牢记这些命名约定。举例<br>DR表示要被删除的节点的右子树，即：右子节点；<br>SL表示兄弟节点的左子树，即：左子节点；<br>…</p>
+<h4 id="二、删除操作宏观分析"><a href="#二、删除操作宏观分析" class="headerlink" title="二、删除操作宏观分析"></a>二、删除操作宏观分析</h4><p>在红黑树中，删除一个节点往大的说，只有以下四种情况。<br><br>情况一：删除的节点的左、右子树都非空；<br>情况二：删除的节点的左子树为空树，右子树非空；<br>情况三：删除的节点的右子树为空树，左子树非空；<br>情况四：删除的节点的左、右子树都为空树；<br><br>其中情况一，可以按与其他二叉搜索树的删除方式一样处理，最终可以转换到后面的三种情况。具体为：找到(Old)D节点的直接后继节点(暂且称为X节点)，然后将X的值转移到D节点，最后将X节点作为真正要被删除掉的节点(即：(Real)D节点)。这样删除操作后，可以保证该树仍然为一棵二叉搜索树。但由于红黑树的定义(即：红黑树的性质)约定。这样删除(Real)D节点后，可能会破坏红黑树的性质。所以需要额外做一些调整处理，这便是下面将要详细讨论的内容。<br><br>说明：下文中所提到的D，除非有特别说明，否则都将指的是(Real)D。</p>
+<h4 id="三、红黑树删除后平衡处理"><a href="#三、红黑树删除后平衡处理" class="headerlink" title="三、红黑树删除后平衡处理"></a>三、红黑树删除后平衡处理</h4><p>在具体分析之前，再次列出红黑树的定义：<br>&emsp;&emsp;(1) 每个节点或者是红色，或者是黑色<br>&emsp;&emsp;(2) 根节点一定是黑色<br>&emsp;&emsp;(3) 所有叶子节点都是黑色的。【红黑树中的叶子节点也叫NIL节点，是指空的叶子节点】<br>&emsp;&emsp;(4) 如果一个节点是红色的，则它的子节点必须是黑色的。（任何两个父子节点不可能同时为红色）<br>&emsp;&emsp;(5) 任意节点到其所有分支叶子节点的简单路径上的黑色节点个数相同。（该属性保证红黑树始终是一颗接近平衡的二叉树）<br>下面是几个图示说明：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_01.png" alt="01"><br>根据红黑树的定义，被删除的节点D(即：上文所述的(Real)D节点)不论如何都一定有一个“右子树”，只是该右子树要不为非空树(即：真正存在的节点，不为Nil节点)，要不就必为空树(即：D的两个子节点都为Nil)。下面称D的该右子节点(或称为右子树)为DR。<br></p>
+<p>a) <strong>被删除的D节点为红色</strong>。这种情况，则与D相关的颜色以及结构关系必然只有如下一种情况(为什么只有这种情况，不明白的请看红黑树的性质)：<img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_02.png" alt="02"><br>分析：因为D为红色，所以P必为黑色，同时DR不可能为红色(否则违反性质4)。同时由于性质5，则DR必为Nil，否则就D树来说，经过DR与不经过DR的路径的黑节点数必不相同。现在要删除D节点，只需要直接将D节点删除，并将DR作为P的左子节点即可。因此删除后，变成上图右侧所示。<br></p>
+<p>b) <strong>被删除的D节点为黑色</strong>。此时情况会稍复杂些，具体又分析为：DR为Nil与DR不为Nil。根据性质5，如果DR不为Nil，则DR必为红色，且DR的两个子节点必为Nil。因此，此处先来分析DR不为Nil的情况(因为该情况比较简单)。而DR为Nil的情况，由后面的C)及其后内容再进行具体分析 。<br>如前所述，如果DR不为Nil，则D、DR必为如下情况：<img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_03.png" alt="03"><br>分析：由于删除的D为黑色，删除后P的左子树的黑节点数必少1，此时刚好DR为黑色，并且删除后DR可以占据D的位置(这样仍是一棵二叉搜索树，只是暂时还不是合格的红黑树罢了)，然后再将DR的颜色改为黑色，刚好可以填补P左子树所减少的黑节点数。从而P树又平衡了。因此，平衡处理后，最终变成上图右侧的图示。<br></p>
+<p> c) <strong>被删除的D为黑色，且DR为Nil</strong>。<br>如果DR为Nil，则删除D后，P的左子树黑节点数必定少1，纯粹想在P的左子树做文章来平衡P树是绝无可能的了。因此，必定需要其他分支的辅助来最终完成平衡调整。根据红黑树的定义，P会有一个右子节点，称为S子节点。此处又可细节分两种情况：黑S与红S。此处先讨论红S的情况。<br><br>说明：如果S为黑，则它必不会为Nil。(不明白的人，再好好想想为什么)。同时根据红黑树的性质，D、S、P、SL、SL的颜色关系必只有如下一种情况(因为此处探讨的是S为红的情况)。<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_04.png" alt="04"><br>分析：删除前P树的左、右子树的黑节点数平衡，删除后(即：上图右侧所示)，经过DR分支的黑节点数将比通过S分支的黑节点数少1。此时，做如下操作<br>将P左旋转，再将P由黑色改为红色，将S由红色改为黑色，演变过程如下图示：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_05.png" alt="05"><br>经过以上演变后，经过P的路径，左分支黑节点数仍是少1，其他分支的黑节点数做仍然保持不变。此时的情况却变成DR的兄弟节点为黑色(不再是红色的情况了)，因此转入此处c)点一开始所说的另一种情况(S为黑色的情况)的处理。<br><br>注意：可能有人会一时想不明白什么要这样转换。因为这样转换后，虽然对于P树的左子树的黑节点数仍然会比右子树的黑节点数少1，但此时DR的兄弟(以前的S节点)现在已经变为SL，即已经由红色变为黑色，并且非常重要的此时的DR的兄弟节点SL的子结点(即：DR的两个侄子节点)，要不就是红色节点要不就必为Nil节点，而这种情况正是D为黑色、S也黑色的情况。(注意看注意看注意看一定注意看这点：对于被删除节点D的父节点来说，D黑S黑的情况下，无论如何D的兄弟节点S的两个儿子节点SL与SR都不可能是非Nil的黑节点。不明白的好好想想为什么)。因此我们有了进一步分析的余地。<br><br>d) <strong>被删除的D为黑色，S也为黑色的情况</strong>。根据D、P、S、SL、SR的颜色组合情况，本来是有非常多种变换的。但事实上，我们只需要按如下4种情况做进一步的处理，即可全部涵盖所有的颜色组合情况。<br>d.1&gt; SL为红，SR颜色任意；(对于该情况的处理，其实我们不关心P的颜色)<br>d.2&gt; SR为红，SL颜色任意；(对于该情况的处理，其实我们不关心P的颜色)<br>d.3&gt; SL、SR都为黑；P为红。(注意：根据前面c)点的红色文字部分的分析，此时SL与SR必定必定都为Nil节点)；<br>d.4&gt; SL、SR都为黑；P为黑。(注意：根据前面c)点的红色文字部分的分析，此时SL与SR必定必定都为Nil节点)；<br></p>
+<p>d.1&gt; <strong>SL为红，SR颜色任意情况</strong><br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_06.png" alt="06"><br>分析：P树的左子树黑节点数减少1，因此，要想平衡，必需想办法让左子树的黑结节数增加1，而且同时P的右子树的黑节点数要保持不变。因此，想办法将SL这个红色节点利用起来，让它来填补P的左子树所缺少的黑节点个数。因此，立马想到旋转，只要有办法转到P的左子树或P位置上，则就有可能填平P左子树的高度。所以具体操作步骤为：<br>将S右旋转；接着将SL改为P的颜色，P的颜色改为黑色(用这个黑色来填补DR分支的黑节点数)；将P左旋转。<br></p>
+<p>d.2&gt; <strong>SR为红色，SL颜色任意的情况</strong><br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_07.png" alt="07"><br>分析：思路同d.1&gt;情况类似，都是想办法用红色的SR节点来填补P的左子树的减少的黑节点数。具体步骤为：<br>将S由黑色改为P的颜色；<br>将SR由红色改为黑色；<br>将P的颜色改为黑色(用该黑色来填补DR分支缺失的黑节点数)；<br>将P节点左旋转；<br></p>
+<p>d.3&gt; <strong>SL、SR都为黑色(其实都为Nil节点)，P为红色的情况</strong><br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_08.png" alt="08"><br>分析：此情况较为简单，直接将红色的P改为黑色，以此为填补DR缺少的黑节点个数。此时P右子树黑节点数却增多，因此，再将S改为红色即可平衡。<br><br>d.4&gt; <strong>SL、SR都为黑色(其实都为Nil节点)，P为黑色的情况</strong><br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-01-15/delete/delete_09.png" alt="09"><br>分析：因为DR、P、S、SL、SR全都为黑色，则不论如何变换，都永远不可能使用P的左右子树的黑节点数达到平衡。而P不平衡的原因是因为P的右子树黑节点数会比左子树多1个。因此，干脆将S由黑色改为红色，如此一来，P的左、右子树的黑节点个数是平衡的。但是，此时经过P的路径的黑节点个数将会比不经过它的路径少一个。因此，我们将P作为待平衡的节点(即：此时的P相当于DR的角色)往上继续上溯，直到P为根节点为止。</p>
+<h4 id="四、红黑树删除代码实现。"><a href="#四、红黑树删除代码实现。" class="headerlink" title="四、红黑树删除代码实现。"></a>四、红黑树删除代码实现。</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line">//删除节点</span><br><span class="line">	public void remove(T key)&#123;</span><br><span class="line">		RBTNode&lt;T&gt; node = search(this.mRoot, key);</span><br><span class="line">		if(null!=node)&#123;</span><br><span class="line">			remove(node);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	private void remove(RBTNode&lt;T&gt; node) &#123;</span><br><span class="line">		RBTNode&lt;T&gt; child=null,parent=null;</span><br><span class="line">		boolean color=false;</span><br><span class="line">		</span><br><span class="line">		//删除的节点有两个孩子,转化为删除该节点的后继节点</span><br><span class="line">		if((node.left!=null) &amp;&amp; (node.right!=null))&#123;</span><br><span class="line">			//记录后继节点</span><br><span class="line">			RBTNode&lt;T&gt; replace = node.right;</span><br><span class="line">			while(replace.left!=null)</span><br><span class="line">				replace = replace.left;</span><br><span class="line">			</span><br><span class="line">			child = replace.right;</span><br><span class="line">			parent = replace.parent;</span><br><span class="line">			if(parent==node)&#123;</span><br><span class="line">				node.right = child;</span><br><span class="line">				if(child!=null)&#123;</span><br><span class="line">					child.parent = node;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;else &#123;</span><br><span class="line">				parent.left = child;</span><br><span class="line">				if(child!=null)&#123;</span><br><span class="line">					child.parent = parent;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">				</span><br><span class="line">			//将后继节点数据拷贝到待删除节点</span><br><span class="line">			node.key = replace.key;	</span><br><span class="line">			color = replace.color;</span><br><span class="line">			if(color==BLACK)&#123;</span><br><span class="line">				removeFixUp(child,parent);</span><br><span class="line">			&#125;</span><br><span class="line">			replace = null;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		if(node.left!=null)&#123;</span><br><span class="line">			child = node.left;</span><br><span class="line">		&#125;else &#123;</span><br><span class="line">			child = node.right;</span><br><span class="line">		&#125;</span><br><span class="line">		parent = node.parent;</span><br><span class="line">		</span><br><span class="line">		if(parent!=null)&#123;</span><br><span class="line">			if(parent.left==node)&#123;</span><br><span class="line">				parent.left = child;</span><br><span class="line">			&#125;else &#123;</span><br><span class="line">				parent.right = child;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;else &#123;</span><br><span class="line">			this.mRoot = child;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		if(child!=null)&#123;</span><br><span class="line">			child.parent = parent;</span><br><span class="line">		&#125;</span><br><span class="line">		if(node.color==BLACK)&#123;</span><br><span class="line">			removeFixUp(child,parent);</span><br><span class="line">		&#125;</span><br><span class="line">		node = null;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//删除节点后，修正红黑树</span><br><span class="line">	private void removeFixUp(RBTNode&lt;T&gt; node, RBTNode&lt;T&gt; parent) &#123;</span><br><span class="line">		//node的兄弟节点</span><br><span class="line">		RBTNode&lt;T&gt; silNode = null;</span><br><span class="line">		</span><br><span class="line">		//如果node是黑色的话，那么必为NIL节点</span><br><span class="line">		while((node == null || isBlack(node)) &amp;&amp; (node != this.mRoot))&#123;</span><br><span class="line">			if (parent.left == node) &#123;</span><br><span class="line">				silNode = parent.right;</span><br><span class="line">				if(isRed(silNode))&#123;		//case 1: 兄弟节点是红色节点，则parent为黑色，silNode的两个儿子都为黑色</span><br><span class="line">					setBlack(silNode);</span><br><span class="line">					setRed(parent );</span><br><span class="line">					leftRotate(parent);</span><br><span class="line">					silNode = parent.right;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				//case 2: 兄弟节点是黑色节点,其左右孩子都为黑色</span><br><span class="line">				if((silNode.left==null || isBlack(silNode.left) &amp;&amp; (silNode.right==null || isBlack(silNode.right))))&#123;</span><br><span class="line">					setRed(silNode);</span><br><span class="line">					node = parent;</span><br><span class="line">					parent = parentOf(node);</span><br><span class="line">					continue;</span><br><span class="line">				&#125;else &#123;</span><br><span class="line">					//case 3: 兄弟节点是黑色，左孩子是红色，右孩子是黑色</span><br><span class="line">					if(silNode.right==null || isBlack(silNode.right))&#123;</span><br><span class="line">						if(silNode.left!=null)</span><br><span class="line">							setBlack(silNode.left);</span><br><span class="line">						setRed(silNode);</span><br><span class="line">						rightRotate(silNode);</span><br><span class="line">						silNode = parent.right;</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					//case 4: 兄弟节点黑色，左孩子任意颜色，右孩子是红色</span><br><span class="line">					silNode.color = parent.color;</span><br><span class="line">					setBlack(parent);</span><br><span class="line">					if(silNode.right!=null)&#123;</span><br><span class="line">						setBlack(silNode.right);</span><br><span class="line">					&#125;</span><br><span class="line">					leftRotate(parent);</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;else &#123;</span><br><span class="line">				silNode = parent.left;</span><br><span class="line">				if(isRed(silNode))&#123;</span><br><span class="line">					setBlack(silNode);</span><br><span class="line">					setRed(parent );</span><br><span class="line">					rightRotate(parent);</span><br><span class="line">					silNode = parent.left;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				if((silNode.left==null || isBlack(silNode.left) &amp;&amp; (silNode.right==null || isBlack(silNode.right))))&#123;</span><br><span class="line">					setRed(silNode);</span><br><span class="line">					node = parent;</span><br><span class="line">					parent = parentOf(node);</span><br><span class="line">					continue;</span><br><span class="line">				&#125;else &#123;</span><br><span class="line">					//case 3: 兄弟节点是黑色，左孩子是黑色，右孩子是红色</span><br><span class="line">					if(silNode.left==null || isBlack(silNode.left))&#123;</span><br><span class="line">						if(silNode.right!=null)</span><br><span class="line">							setBlack(silNode.right);</span><br><span class="line">						setRed(silNode);</span><br><span class="line">						leftRotate(silNode);</span><br><span class="line">						silNode = parent.left;</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					//case 4: 兄弟节点黑色，右孩子任意颜色，左孩子是红色</span><br><span class="line">					silNode.color = parent.color;</span><br><span class="line">					setBlack(parent);</span><br><span class="line">					if(silNode.left!=null)&#123;</span><br><span class="line">						setBlack(silNode.left);</span><br><span class="line">					&#125;</span><br><span class="line">					rightRotate(parent);</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		//如果node不是NIL节点，则必为红色</span><br><span class="line">		if(node != null)</span><br><span class="line">			setBlack(node);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>了解红黑树及所有代码实现，请看另一篇博客 <a href="https://ouriris.github.io/2018/01/15/2018-01-15-R-B-Tree/">红黑树</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/进击的Java新人/" rel="tag"># 进击的Java新人</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/15/2018-01-15-R-B-Tree/" rel="next" title="数据结构:红黑树(进击的Java新人Week.6学习笔记)">
+                <i class="fa fa-chevron-left"></i> 数据结构:红黑树(进击的Java新人Week.6学习笔记)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/28/2018-01-28-Java-network-programming-socket/" rel="prev" title="Java网络编程之Socket篇">
+                Java网络编程之Socket篇 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <a href="/about">
+            <img class="site-author-image" itemprop="image"
+                 src="/uploads/avatar.jpg"
+                 alt="" />
+          </a>
+          <a href="/about">
+            <p class="site-author-name" itemprop="name"></p>
+          </a>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、节点命名约定"><span class="nav-number">1.</span> <span class="nav-text">一、节点命名约定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、删除操作宏观分析"><span class="nav-number">2.</span> <span class="nav-text">二、删除操作宏观分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、红黑树删除后平衡处理"><span class="nav-number">3.</span> <span class="nav-text">三、红黑树删除后平衡处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、红黑树删除代码实现。"><span class="nav-number">4.</span> <span class="nav-text">四、红黑树删除代码实现。</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
