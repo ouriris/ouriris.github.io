@@ -359,10 +359,12 @@
 <ol>
 <li><strong>Buffer</strong>：缓冲区，也就是内存中一块用来暂存数据的固定大小的区域。可以想象成一个用于装水的玻璃缸；</li>
 <li><strong>Channel</strong>：通道，数据可以通过Channel写入Buffer或从Buffer读取到别的地方，主要分为文件Channel和网络Channel两大类。可以想象下我可以用一根水管一端接水龙头，另一端伸到玻璃缸里，那么水就能源源不断地流入玻璃缸了，这根水管是一个往Buffer写数据的Channel；我还可以用另一根水管把水从玻璃缸中抽出到其它地方，这根水管是一个从Buffer读数据的Channel。</li>
-<li><strong>Selector</strong>：I/O多路复用的选择器，是实现Non-Blocking I/O、高并发的关键，只能用于网络Channel，所以暂时先放一边，等到网络Channel时会一起讲。</li>
+<li><strong>Selector</strong>：I/O多路复用的选择器，与Channel配合使用，是实现Non-Blocking I/O、高并发的关键，只能用于网络Channel，所以暂时先放一边，等到网络Channel时会一起讲。</li>
 </ol>
 <p>所以对于前两者，它们的关系大概如下图，但是注意写入或读取的Channel都可以有多个，不仅限于一个。<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/relationship_buffer_channel.png" alt=""></p>
-
+<h1 id="JavaNIO之三：Buffer"><a href="#JavaNIO之三：Buffer" class="headerlink" title="JavaNIO之三：Buffer"></a>JavaNIO之三：Buffer</h1><h2 id="总体概述"><a href="#总体概述" class="headerlink" title="总体概述"></a>总体概述</h2><p>学过计算机的同学应该不难理解什么是（一般意义上的）Buffer，其实JavaNIO中的Buffer类也是类似：一块尺寸在初始化之后就固定的内存区域，用来暂时存放数据。下面给出Buffer家族的类层次图：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_classes_hierarchy.png" alt=""></p>
+<p>可以看到其实<code>Buffer</code>是一个抽象类，在其之下是对应所有包装类型的抽象Buffer类，其实就是属性中增加了一个对应的原始数据类型的数组（比如<code>DoubleBuffer</code>里面比<code>Buffer</code>多了一个<code>double[]</code>）。再往下就是具体的实现类，基本上每种数据类型都至少对应两种：HeapXXXBuffer（在Java Heap中分配）和DirectXXXBuffer（在本地内存中分配），比如<code>ByteBuffer</code>下面的<code>HeapByteBuffer</code>和<code>DirectByteBuffer</code>。</p>
+<h2 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h2>
           
         
       
