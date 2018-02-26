@@ -45,16 +45,23 @@ byte b = is.read();
 现代高性能服务器（Game Server、Web Server、IM Server…）、高性能通讯框架的基础，比如Netty、Nginx、Node.js、Redis、Dubbo等，虽然它们的编程语言并不相同，但是都是依赖于OS底层提供的能力实现的，最终的编程模型并不相差太多。业界经常说的C100K之类的问题，靠BIO基本是解决不了的，通常都是需要 Non-Blocking I/O（具体原因会在下面章节阐述）。所以理解这些新的I/O模型，是学习与从事高性能网络开发工作的前提。
 
 # JavaNIO之二：三大组件（Buffer、Channel、Selector）
+
 JavaNIO基本上是围绕这3个东西进行编程：
 1. **Buffer**：缓冲区，也就是内存中一块用来暂存数据的固定大小的区域。可以想象成一个用于装水的玻璃缸；
 2. **Channel**：通道，数据可以通过Channel写入Buffer或从Buffer读取到别的地方，主要分为文件Channel和网络Channel两大类。可以想象下我可以用一根水管一端接水龙头，另一端伸到玻璃缸里，那么水就能源源不断地流入玻璃缸了，这根水管是一个往Buffer写数据的Channel；我还可以用另一根水管把水从玻璃缸中抽出到其它地方，这根水管是一个从Buffer读数据的Channel。
-3. **Selector**：I/O多路复用的选择器，是实现Non-Blocking I/O、高并发的关键，只能用于网络Channel，所以暂时先放一边，等到网络Channel时会一起讲。
+3. **Selector**：I/O多路复用的选择器，与Channel配合使用，是实现Non-Blocking I/O、高并发的关键，只能用于网络Channel，所以暂时先放一边，等到网络Channel时会一起讲。
 
 所以对于前两者，它们的关系大概如下图，但是注意写入或读取的Channel都可以有多个，不仅限于一个。
 ![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/relationship_buffer_channel.png)
 
+# JavaNIO之三：Buffer
+## 总体概述
+学过计算机的同学应该不难理解什么是（一般意义上的）Buffer，其实JavaNIO中的Buffer类也是类似：一块尺寸在初始化之后就固定的内存区域，用来暂时存放数据。下面给出Buffer家族的类层次图：
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_classes_hierarchy.png)
 
+可以看到其实`Buffer`是一个抽象类，在其之下是对应所有包装类型的抽象Buffer类，其实就是属性中增加了一个对应的原始数据类型的数组（比如`DoubleBuffer`里面比`Buffer`多了一个`double[]`）。再往下就是具体的实现类，基本上每种数据类型都至少对应两种：HeapXXXBuffer（在Java Heap中分配）和DirectXXXBuffer（在本地内存中分配），比如`ByteBuffer`下面的`HeapByteBuffer`和`DirectByteBuffer`。
 
+## 常用操作
 
 
 
