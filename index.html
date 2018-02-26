@@ -271,6 +271,145 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/02/25/2018-02-25-Java-nio-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/25/2018-02-25-Java-nio-basic/" itemprop="url">Java NIO 基础白话文解释</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-25T18:26:04+08:00">
+                2018-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Author: Yellow</p>
+<h1 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h1><p>本文是以一种简单易懂的方式阐述Java NIO中一些基本但是可能让初学者费解的概念，参考了《进击的Java新人》和互联网上的一些资料，内容不仅限于Java，可能会牵涉到一些计算机的基础知识，比如I/O模型、操作系统知识等。</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>当前这个时代，随着上网成本越来越低廉、终端性能越来越强大、应用种类也越来越丰富，互联网已触及我们生活中的每个角落。如今，如果一个年轻人从没点过一次美团外卖，或者从没玩过网络游戏或看过网络直播，那么他可能会被认为是刚从山洞里走出来的原始人。</p>
+<p>而这一切便利的互联网服务的背后，是由一系列复杂的技术做支撑的，如何保证在海量用户访问的情况下服务还能稳定并且快速，这成了很多企业要着手解决的问题，毕竟谁都不想自己的产品三天两头崩溃打开一个页面要十几秒吧，如果真要那样，估计boss会提着菜刀在办公室等你了（参考J东）。</p>
+<p>然而不管一个公司的业务是游戏，还是外卖，亦或是社交，其本质都是网络应用（包括客户端与服务器的交互、服务器与服务器的交互），所以一个公司如何想handle大量的数据、大量的用户与大量的交互，高性能网络编程必须得玩的溜。</p>
+<p>对于大部分<del>SSH</del>Java程序员来说，拿SSH开发Web应用应该是家常便饭了，但如果把SSH拿掉，让他做一个网络应用（比如一个IM），他可能就懵逼了。个人认为，“框架”的确是一个好东西，特别是对于做项目、提高生产率来说；但是另一方面，如果一个程序员只是想着怎么去使用这些框架，而忽视了很多更核心更基本的东西，那对于他的个人发展来说，无异于故步自封。（见<a href="http://www.vaikan.com/the-degradation-of-java-developers/" title="Java程序员的堕落" target="_blank" rel="noopener">Java程序员的堕落</a>）</p>
+<p>另一方面，对于SSH中的核心Spring来说，其性能在不同语言的各种Web框架中也是几乎垫底的（见这个<a href="https://www.techempower.com/benchmarks/#section=data-r15&amp;hw=ph&amp;test=json" title="Benchmark" target="_blank" rel="noopener">Benchmark</a>），但是同样是基于Java的Netty却名列前茅，所以Java本身性能并不弱，弱的是Spring使用的堵塞式的I/O模型（但是最新的Spring 5似乎推出了能支持非堵塞I/O的Spring WebFlux，这个有带考察）。</p>
+<p>所以，为了了解或者入门高性能网络编程，I/O模型的学习一定是重中之重，下面就会来谈一谈这方面的东西。（个人觉得，I/O这个东西一直都是拖累系统性能的吊车尾：内存拖累CPU、硬盘拖累内存、……，于是牛人们为了让系统不至于被拖累得那么惨，捣鼓出了各种玩意，比如Cache、LazyLoad等… 扯远了）</p>
+<h1 id="JavaNIO之一：传统I-O与NIO的关系"><a href="#JavaNIO之一：传统I-O与NIO的关系" class="headerlink" title="JavaNIO之一：传统I/O与NIO的关系"></a>JavaNIO之一：传统I/O与NIO的关系</h1><h2 id="诞生历史"><a href="#诞生历史" class="headerlink" title="诞生历史"></a>诞生历史</h2><p>从Java诞生开始，伴随着JDK1.0，Java程序员们就有了相应的I/O类可以使用，比如大家熟悉的老朋友<code>InputStream</code>、<code>OutputStream</code>等等，基本都集中于<code>java.io</code>这个package下面。那时候用户量小，数据量小，所以大家都用得很开心。那时候的代码大概长成这个样子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">InputStream is = <span class="keyword">new</span> FileInputStream(“a.txt”);</span><br><span class="line"><span class="keyword">byte</span> b = is.read();</span><br></pre></td></tr></table></figure></p>
+<p>到了大概两千年初，Java在其JDK1.4版本中包含了一个新的朋友：<code>java.nio</code>，提供了对非阻塞I/O的抽象（对下需要依赖OS的实现）。有人认为<strong>nio</strong> = Non-Blocking I/O，但是官方宣传<strong>nio</strong> = New I/O，然而是哪个并不重要，只要跟老朋友阻塞式Blocking I/O（BIO）区分开就行。</p>
+<p>之后到了JDK1.7的时候，Java又引入了一个更新的朋友：AIO（具体的Class也是在nio package下），负责对异步I/O（Asynchronous I/O）进行抽象，然而很多OS的AIO的实现并不给力，效率不高，所以实际用处并不大。<strong>我们下面的内容主要是基于Non-Blocking I/O</strong>。</p>
+<p>我们看到Java为我们带来了很多新朋友（Class、package），但是有一点要注意的是Java并没有创造任何I/O模型，I/O模型必须OS层面提供支持，并以syscall的形式暴露出来，Java做的工作实际上是对这些syscall的再一次封装。</p>
+<h2 id="有什么用处？"><a href="#有什么用处？" class="headerlink" title="有什么用处？"></a>有什么用处？</h2><p>现代高性能服务器（Game Server、Web Server、IM Server…）、高性能通讯框架的基础，比如Netty、Nginx、Node.js、Redis、Dubbo等，虽然它们的编程语言并不相同，但是都是依赖于OS底层提供的能力实现的，最终的编程模型并不相差太多。业界经常说的C100K之类的问题，靠BIO基本是解决不了的，通常都是需要 Non-Blocking I/O（具体原因会在下面章节阐述）。所以理解这些新的I/O模型，是学习与从事高性能网络开发工作的前提。</p>
+<h1 id="JavaNIO之二：三大组件（Buffer、Channel、Selector）"><a href="#JavaNIO之二：三大组件（Buffer、Channel、Selector）" class="headerlink" title="JavaNIO之二：三大组件（Buffer、Channel、Selector）"></a>JavaNIO之二：三大组件（Buffer、Channel、Selector）</h1><p>JavaNIO基本上是围绕这3个东西进行编程：</p>
+<ol>
+<li><strong>Buffer</strong>：缓冲区，也就是内存中一块用来暂存数据的固定大小的区域。可以想象成一个用于装水的玻璃缸；</li>
+<li><strong>Channel</strong>：通道，数据可以通过Channel写入Buffer或从Buffer读取到别的地方，主要分为文件Channel和网络Channel两大类。可以想象下我可以用一根水管一端接水龙头，另一端伸到玻璃缸里，那么水就能源源不断地流入玻璃缸了，这根水管是一个往Buffer写数据的Channel；我还可以用另一根水管把水从玻璃缸中抽出到其它地方，这根水管是一个从Buffer读数据的Channel。</li>
+<li><strong>Selector</strong>：I/O多路复用的选择器，是实现Non-Blocking I/O、高并发的关键，只能用于网络Channel，所以暂时先放一边，等到网络Channel时会一起讲。</li>
+</ol>
+<p>所以对于前两者，它们的关系大概如下图，但是注意写入或读取的Channel都可以有多个，不仅限于一个。<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/relationship_buffer_channel.png" alt=""></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/01/28/2018-01-28-Java-network-programming-socket/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1721,149 +1860,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/23/2017-11-23-java-heap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OurIris">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/23/2017-11-23-java-heap/" itemprop="url">Java--堆(进击的Java新人Week.3学习笔记)</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-23T10:11:06+08:00">
-                2017-11-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Author: Oscar</p>
-<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><ul>
-<li>堆的介绍</li>
-<li>堆的工作过程</li>
-</ul>
-<h1 id="堆的介绍"><a href="#堆的介绍" class="headerlink" title="堆的介绍"></a>堆的介绍</h1><blockquote>
-<p>Java把内存划分为两种，一种是栈内存，另外一种是堆内存。 在函数中定义的一些基本类型的变量和对象的引用变量都是在函数的栈内存中分配的，而一般new出来的对象或者定义的数组，则分配到堆内存。</p>
-</blockquote>
-<blockquote>
-<p>栈内存和堆内存区别之一是，栈内存能够在方法执行完后，自动出栈，自动销毁方法里的变量。而堆内存的对象需要交给Java的垃圾回收器处理,即垃圾回收机制。</p>
-</blockquote>
-<blockquote>
-<p>在创建对象的时候，真正的对象存放在堆里，而对象的引用地址则存放在栈里。</p>
-</blockquote>
-<h1 id="堆的工作过程"><a href="#堆的工作过程" class="headerlink" title="堆的工作过程"></a>堆的工作过程</h1><p><strong>示例</strong><br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo03_01_05</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        A a = <span class="keyword">new</span> A();       </span><br><span class="line">        a.num = <span class="number">5</span>;           </span><br><span class="line">        A aa = a;            </span><br><span class="line">        aa.num = <span class="number">6</span>;</span><br><span class="line">        System.out.println(a.num); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> num = <span class="number">4</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="过程分析"><a href="#过程分析" class="headerlink" title="过程分析"></a>过程分析</h3><ol>
-<li>当new A()时，A()放在堆里，同时num=4也在堆里，变量a 放在栈里，A()引用地址 0x005赋值给a<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p3.png" alt=""></li>
-<li>a.num = 5，修改了A()里num的值为5<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p4.png" alt=""></li>
-<li>A aa = a时，变量a把A()的引用地址赋值给变量aa，因此aa和a同时指向了A()<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p5.png" alt=""></li>
-<li>aa.num = 6，修改了A()里num的值为6<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p6.png" alt=""></li>
-<li>如果变量a和aa都设为null，这时就没有变量引用这个对象，这个对象就成为了垃圾，Java的垃圾处理器就会在一定的时间内把这个对象回收。<br><img src="https://github.com/zhengdunhao/UploadFiles/blob/master/p7.png?raw=true" alt=""></li>
-</ol>
-<h1 id="传递String类型"><a href="#传递String类型" class="headerlink" title="传递String类型"></a>传递String类型</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo03_02_01</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        String a = <span class="string">"a"</span>;</span><br><span class="line">        change(a);</span><br><span class="line">        System.out.println(<span class="string">"a:"</span>+a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">change</span><span class="params">(String a)</span> </span>&#123;</span><br><span class="line">        a = <span class="string">"b"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>java中String类型也是对象型变量，所以它传递的是引用的副本。String是一个非可变类，当字符串发生变化时，会自动生成一个新的String对象。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1918,7 +1914,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

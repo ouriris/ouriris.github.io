@@ -271,6 +271,149 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/23/2017-11-23-java-heap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/23/2017-11-23-java-heap/" itemprop="url">Java--堆(进击的Java新人Week.3学习笔记)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-23T10:11:06+08:00">
+                2017-11-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Author: Oscar</p>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><ul>
+<li>堆的介绍</li>
+<li>堆的工作过程</li>
+</ul>
+<h1 id="堆的介绍"><a href="#堆的介绍" class="headerlink" title="堆的介绍"></a>堆的介绍</h1><blockquote>
+<p>Java把内存划分为两种，一种是栈内存，另外一种是堆内存。 在函数中定义的一些基本类型的变量和对象的引用变量都是在函数的栈内存中分配的，而一般new出来的对象或者定义的数组，则分配到堆内存。</p>
+</blockquote>
+<blockquote>
+<p>栈内存和堆内存区别之一是，栈内存能够在方法执行完后，自动出栈，自动销毁方法里的变量。而堆内存的对象需要交给Java的垃圾回收器处理,即垃圾回收机制。</p>
+</blockquote>
+<blockquote>
+<p>在创建对象的时候，真正的对象存放在堆里，而对象的引用地址则存放在栈里。</p>
+</blockquote>
+<h1 id="堆的工作过程"><a href="#堆的工作过程" class="headerlink" title="堆的工作过程"></a>堆的工作过程</h1><p><strong>示例</strong><br><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo03_01_05</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        A a = <span class="keyword">new</span> A();       </span><br><span class="line">        a.num = <span class="number">5</span>;           </span><br><span class="line">        A aa = a;            </span><br><span class="line">        aa.num = <span class="number">6</span>;</span><br><span class="line">        System.out.println(a.num); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> num = <span class="number">4</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="过程分析"><a href="#过程分析" class="headerlink" title="过程分析"></a>过程分析</h3><ol>
+<li>当new A()时，A()放在堆里，同时num=4也在堆里，变量a 放在栈里，A()引用地址 0x005赋值给a<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p3.png" alt=""></li>
+<li>a.num = 5，修改了A()里num的值为5<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p4.png" alt=""></li>
+<li>A aa = a时，变量a把A()的引用地址赋值给变量aa，因此aa和a同时指向了A()<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p5.png" alt=""></li>
+<li>aa.num = 6，修改了A()里num的值为6<br><img src="https://raw.githubusercontent.com/zhengdunhao/UploadFiles/master/p6.png" alt=""></li>
+<li>如果变量a和aa都设为null，这时就没有变量引用这个对象，这个对象就成为了垃圾，Java的垃圾处理器就会在一定的时间内把这个对象回收。<br><img src="https://github.com/zhengdunhao/UploadFiles/blob/master/p7.png?raw=true" alt=""></li>
+</ol>
+<h1 id="传递String类型"><a href="#传递String类型" class="headerlink" title="传递String类型"></a>传递String类型</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo03_02_01</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        String a = <span class="string">"a"</span>;</span><br><span class="line">        change(a);</span><br><span class="line">        System.out.println(<span class="string">"a:"</span>+a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">change</span><span class="params">(String a)</span> </span>&#123;</span><br><span class="line">        a = <span class="string">"b"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>java中String类型也是对象型变量，所以它传递的是引用的副本。String是一个非可变类，当字符串发生变化时，会自动生成一个新的String对象。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/22/2017-11-22-java-method-process/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -617,7 +760,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
