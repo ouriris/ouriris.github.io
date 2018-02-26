@@ -19,7 +19,7 @@ Author: Jonas Yu
 
 ## 基于Socket的Java网络编程
 
-基于TCP通讯过程
+基于TCP通讯过程：
 通常情况下，服务端的Socket会监听某个端口是否有连接请求，当服务端接收到客户端的连接请求时，会向客户端发送接收的消息，这样一个连接就建立了。客户端与服务端都可以通过Socket进行数据通信。
 
 Java的网络编程的接口大多数位于 java.net 和 java.nio 这两个package里，掌握这两个package是Java程序员必备的基础技能。Java.net中提供了两个类Socket和ServerSocket，分别用来表示双向连接的客户端和服务端。
