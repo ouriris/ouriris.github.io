@@ -118,6 +118,26 @@ flip()执行后产生如下效果：
 Heap Buffer与Direct Buffer在Java进程中的布局图如下所示：
 ![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/java_memory_layout.png)
 
+# JavaNIO之四：三大组件之Channel
+Channel可以想象成一个管子，一头连接着I/O数据来源/目的地（文件、网络等），一头连接着Buffer，数据可以在这两者之间传输。
+
+Channel按照面向的设备的不同，可以分为两种：
+1. FileChannel（面向磁盘文件）
+2. SocketChannel、ServerSocketChannel（面向网络数据流）
+
+SocketChannel、ServerSocketChannel将在之后跟着Selector一起讲，**这里先讲FileChannel**。另外从JDK1.7开始多了一些以**Asynchronous**打头从Channel类，这是属于AIO部分的东西，这里也不作阐述。
+
+## 如何使用
+可以通过FileChannel类的`open()`函数方便地创建一个与某个文件关联的FileChannel对象。常用的API大概有下面这些：
+```java
+public abstract int read (ByteBuffer dst, long position)
+public abstract int write (ByteBuffer src, long position)
+public abstract long size()
+public abstract long position()
+public abstract void position (long newPosition)
+public abstract void truncate (long size)
+public abstract void force (boolean metaData)
+```
 
 
 
