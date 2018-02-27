@@ -61,9 +61,62 @@ JavaNIO基本上是围绕这3个东西进行编程：
 
 可以看到其实`Buffer`是一个抽象类，在其之下是对应所有包装类型的抽象Buffer类，其实就是属性中增加了一个对应的原始数据类型的数组（比如`DoubleBuffer`里面比`Buffer`多了一个`double[]`）。再往下就是具体的实现类，基本上每种数据类型都至少对应两种：HeapXXXBuffer（在Java Heap中分配）和DirectXXXBuffer（在本地内存中分配），比如`ByteBuffer`下面的`HeapByteBuffer`和`DirectByteBuffer`。
 
-## 常用操作
+## Buffer的重要属性和操作
+首先要说明的是，NIO中一些类的设计思路跟老的BIO类有些不一样，BIO虽然也可以自己new一个`byte[]`作为InputStream读取数据时的目的地，或OutputStream写数据时的目的地，但往往我们只需要把这个数组传进去read()或write()就行了，不需要知道读到或写到数组的什么地方，之后的工作Stream会帮我们做了。
 
+然而NIO的使用方式相比起来却有点“**原始**”：管理Buffer读到哪、写到哪的工作不由Channel负责，而是回到Buffer自己身上，由程序员自己控制。最重要的属性（下标）有3个：
+1. **position**：指向当前可被操作的位置（操作为读or写）
+2. **limit**：指向可被操作的边界（如果是写操作，则表示空闲位置的边界；如果是读操作，则表示有效数据的边界）
+3. **capacity**：Buffer的Size，Buffer被初始化之后就是一个固定值
 
+它们的大小关系是：**position <= limit <= capacity**。只看文字有点抽象难理解，下面会结合图示说明。为了方便理解，你可以认为Buffer具有两种模式：读数据时处于**读模式**，写数据是处于**写模式**。然而实际上Buffer并没有这两种模式的设置，只是你可以逻辑上这样认为。
+
+### 1.初始化
+一个刚刚初始化好的空的Buffer（可以理解成做好准备可以写数据了！）长这样：
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_1.png)
+
+**mark**是什么可以先不管。**capacity**就是初始化时设定的Buffer的Size，这里是10。**position**指向的是当前可以被操作的位置，因为我们现在是**写模式**，所以它指向的是当前可以写的一个空位。**limit**则指向可写的边界，可以理解成写到哪就不允许继续往下写了，因为我们这是刚刚创建的空Buffer，默认下可以写到全部满位置，所以这时候**limit** = **capacity** = 10。
+
+### 2.顺序写入几个字符
+假设我们现在依次往Buffer里面写入5个字符 H、 e、 l、 l 、o：
+```java
+buffer.put((byte)'H').put((byte)'e').put((byte)'l').put((byte)'l').put((byte)'o');
+```
+则每写入一个字符，**position**都会向右移一个位置，写了5个字符后，它就指向5这个位置。现在它看起来像这样：
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_2.png)
+
+### 3.随机写入
+假设我们要直接修改Buffer中的某个位置，可以这样做：
+```java
+buffer.put(0, (byte)'M');
+```
+这样做会把原先位置0的字符‘H’修改为‘M’，并且随机写入不会改变**position**的位置（它还是指向5）。如果这时候我们再顺序写入一个字符‘w’，这个字符是会写在位置5的，现在它看起来像这样：
+```java
+buffer.put((byte)'w');
+```
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_3.png)
+
+### 4.翻转！变成读模式
+**PS：flip操作经常会让刚接触NIO的人费解！所以下面内容请仔细阅读！**
+
+假设现在我们要读出Buffer里的数据，直接调用`get()`是不行的，因为读操作也要依赖**position**、**limit**，而这时候**position**是指向一个空位置，所以读不出先前写进Buffer里的数据。于是这时候我们需要一个**翻转**操作：
+```java
+buffer.flip();
+```
+flip()执行后产生如下效果：
+1. **当前limit**变成**先前position**的值；
+2. **当前position**变成0。
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_4.png)
+可以简单理解成Buffer变成了**读模式**，**position**指向了当前可以被读的字符，**limit**则指向字符串的尾巴（也就是最多允许读到哪里为止）。之后就可以调用`get()`来读取数据了，每次读**position**都会往右移动一个位置，直到**limit**为止。
+
+### 总结
+上面罗列了Buffer的3个重要属性和flip操作，其中理解flip操作非常关键。可以想想，如果我们连续调用两次`flip()`，会产生什么效果？答案就是这个Buffer变成既不能读也不能写了，因为**position**、**limit**都指向0了。
+
+## Heap Buffer与Direct Buffer
+一般我们new出来的Buffer都是在Java Heap中分配的空间，在里面的空间可以被GC回收，但有时候我们为了性能考虑，比如不想GC干扰或增加GC压力，可以考虑在Java进程中的Native内存中分配Buffer，这时候的Buffer称为Direct Buffer，可以通过`allocateDirect(int capacity)`获得。但是分配在Native内存中的Buffer不能被GC回收，所以如果要使用，请参考这里：[Deallocating Direct Buffer Native Memory in Java for JOGL](https://stackoverflow.com/questions/3496508/deallocating-direct-buffer-native-memory-in-java-for-jogl/26777380#26777380 "Deallocating Direct Buffer Native Memory in Java for JOGL")
+
+Heap Buffer与Direct Buffer在Java进程中的布局图如下所示：
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/java_memory_layout.png)
 
 
 
