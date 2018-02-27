@@ -247,6 +247,32 @@ public class Client {
 ![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/network_model_3.png)
 相比之前的模型，这个模型连从内核空间拷贝数据到用户空间都不需要线程自己做了，线程发起请求后留下一个回调接口就可以了，等数据准备好之后就会调用该回调接口。用学生做试卷的例子来说就是，老师派完试卷后就回办公室了，学生做完试卷后自己把试卷拿到办公室给老师。是不是很完美？然而真正OS实现上现在AIO还不成熟，效率甚至还不如NIO。
 
+## I/O多路复用（Multiplexing）
+**I/O多路复用**一般是指结合 **同步 + 非堵塞式I/O模型**，用一个线程监视大量socket的技术，当有socket变成Ready了，这个线程就能获知。一般Linux底层提供的有poll/select、epoll几种技术，poll/select差不多，都是线程只能获知有socket ready了，但是不知道是哪些socket，所以必须要一个个socket去check；而epoll则连哪些socket变成ready了也能获知，所以性能更高。
+
+## Selector API
+JavaNIO中与I/O多路复用有关的3大类：
+1. SelectableChannel（Socket & ServerSocket），代表socket
+2. Selector，监听器，可以监听多个socket
+3. SelectionKey，抽象表示一个Selector与一个channel的监听关系
+SelectableChannel与Selector是多对多关系：
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/java_selector_channel.png)
+
+用法参考下面API或自行Google：
+```java
+//SelectableChannel（Socket类）
+public abstract SelectionKey register (Selector sel, int ops)
+//Selector
+public abstract int select (long timeout)
+//SelectionKey
+public final boolean isReadable()
+public final boolean isWritable()
+public final boolean isConnectable()
+public final boolean isAcceptable()
+
+```
+
+
 
 
 
