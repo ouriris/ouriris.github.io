@@ -54,7 +54,7 @@ JavaNIO基本上是围绕这3个东西进行编程：
 所以对于前两者，它们的关系大概如下图，但是注意写入或读取的Channel都可以有多个，不仅限于一个。
 ![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/relationship_buffer_channel.png)
 
-# JavaNIO之三：Buffer
+# JavaNIO之三：三大组件之Buffer
 ## 总体概述
 学过计算机的同学应该不难理解什么是（一般意义上的）Buffer，其实JavaNIO中的Buffer类也是类似：一块尺寸在初始化之后就固定的内存区域，用来暂时存放数据。下面给出Buffer家族的类层次图：
 ![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_classes_hierarchy.png)
@@ -138,6 +138,43 @@ public abstract void position (long newPosition)
 public abstract void truncate (long size)
 public abstract void force (boolean metaData)
 ```
+用起来跟Stream类差不多，特别注意的是`force()`这个函数，它可以强制OS把数据刷写到磁盘上，因为有时候我们对FileChannel进行写入时，数据不一定已经落到磁盘上，可能在OS的cache中。
+
+## 内存映射文件（Memory Mapped File）
+如果不提及**内存映射文件**，那么NIO中的FileChannel用起来其实跟BIO的Stream差不多。然而这个特性是NIO开始引入的（底层还是依赖OS的支持），能在一些场景下提供非常好的性能，所以应该重点关注。
+
+### 虚存空间（Virtual Address Space）
+要讲清楚什么是**内存映射文件**，必须先弄明白什么是**虚存空间（以下简称VAS）**。VAS可以理解成进程运行的“沙箱”，每一个进程都运行在一个单独的VAS里，在32bit的机器上，这个VAS大小为4GB。那是不是表示如果运行了10个进程，就需要占用10 x 4GB = 40GB的内存呢？显然不是的，其实VAS只是一个虚拟概念，只是从进程角度看，它觉得自己拥有一个4GB这么大的内存空间，它可以load一段数据并放在地址0x12345678这个位置，然而在真正的物理内存这边，数据并不一定是放在这个地址，虚存地址和物理内存地址之间需要靠一个叫**内存管理单元（MMU）**的硬件做转换。可以参考下面图示，如果还是不懂，可以自行Google。
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/vmm.png)
+
+这样做好处主要是可以隔离不同的进程，防止恶意进程对其它进程进行破坏。
+
+另外一方面，4GB的虚拟空间进一步可以分成2部分：内核空间和用户空间。CPU也有两种运行状态：内核态和用户态。内核空间里一般放驱动、硬件缓冲区等敏感信息，不能随意读写，而用户空间则存放一般经常分配的内存空间。CPU在用户态时，可以访问用户空间，但不能访问内核空间和执行里面的代码；CPU变成内核态后，可以访问内核空间和读写硬件。用户态到内核态之间的转换一般通过中断或系统调用（system call）。
+
+### BIO vs. Memory Mapped File
+现在可以来解释**内存映射文件**了。首先我们来看老的BIO读文件时，数据是怎样在设备和内存中跑的：
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/bio.png)
+
+假设一个文件在Disk中，大小是3个块，现在进程想读取文件的第一个块。
+1. 首先，进程发起一个系统调用，这时候CPU变成内核态；
+2. CPU在内核空间开辟一块缓冲区，并命令Disk把数据装载到这个内核缓冲区中，这时候进程需要堵塞等待硬件完成这个数据装载；
+3. 数据装载到内核缓冲区结束，进程把数据从内核缓冲区Copy到用户空间。
+
+从这个步骤可以看出，数据经历了2次Copy：Disk -> 内核空间，内核空间 -> 用户空间。写数据到Disk的时候流程也是类似，可以看出在数据量大的情况下，这种方式比较低效。
+
+在支持**内存映射文件**的OS上，可以绕过内核空间，直接把整个文件“投影”到用户空间，这个“投影”操作时很快的，然而这时候它并不真正的Copy数据到用户空间，只是对于进程来说“看起来像是”整个文件都在内存中了。当进程需要文件的第一块数据时，会产生一个Page Fault，OS会自动从Disk帮忙把第一块数据加载到用户空间中；类似的，写数据只需要写入用户空间，而不需要堵塞，OS会帮忙同步回Disk中。图示：
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/nio_mmap.png)
+
+这项特性主要应用场景有：高性能文件随机读写、高性能进程间通信（不同编程语言也可以）
+
+### Java API
+FileChannel类中有一个map()函数：
+```java
+public abstract MappedByteBuffer map(MapMode mode, long position, long size)
+```
+MappedByteBuffer是一个抽象类，从JDK1.8代码上看只有一个实现类DirectByteBuffer，它是上面我们讲过的在Native空间分配的Direct Buffer。
+
+
 
 
 
