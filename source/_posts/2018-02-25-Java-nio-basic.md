@@ -172,7 +172,82 @@ FileChannel类中有一个map()函数：
 ```java
 public abstract MappedByteBuffer map(MapMode mode, long position, long size)
 ```
-MappedByteBuffer是一个抽象类，从JDK1.8代码上看只有一个实现类DirectByteBuffer，它是上面我们讲过的在Native空间分配的Direct Buffer。
+MappedByteBuffer是一个抽象类，从JDK1.8代码上看只有一个实现类DirectByteBuffer，它是上面我们讲过的在Native空间分配的Direct Buffer。例子代码可以在自行Google。
+
+# JavaNIO之五：三大组件之Selector
+由于Selector只跟网络的Channel有关，所以它们放到这里一起讲。
+
+## 堵塞式I/O的年代
+回忆下以前学Java Socket编程时一个最简单的服务器-客户端例子：
+```java
+public class Server {
+    public static void main(String args[]) throws IOException{
+        ServerSocket ss = new ServerSocket(8080);
+        Socket conn = ss.accept();  // 堵塞！
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+        String s = br.readLine();  // 堵塞！
+        while (s != null) {
+            System.out.println(s);
+            bw.write(s.toUpperCase() + "\n");  // 堵塞！
+            bw.flush();
+            s = br.readLine();  // 堵塞！
+        }
+
+        br.close();
+        bw.close();
+        conn.close();
+    }
+}
+```
+```java
+public class Client {
+    public static void main(String args[]) throws IOException {
+        Socket conn = new Socket("127.0.0.1", 8080);  // 堵塞！
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+        bw.write("hello\n");  // 堵塞！
+        bw.flush();
+        String s = br.readLine();  // 堵塞！
+        System.out.println(s);
+
+        bw.write("world\n");  // 堵塞！
+        bw.flush();
+        s = br.readLine();  // 堵塞！
+        System.out.println(s);
+
+
+        br.close();
+        bw.close();
+        conn.close();
+    }
+}
+```
+这是个很简单的例子，先运行服务器，进程会堵塞在`ss.accept();`这个地方，然后再运行客户端，它们会建立链接。之后客户端会发送“hello”和“world”两个字符串给服务器，服务器收到后打印出来，之后就退出。实际上上述代码注释里标注了“堵塞！”的地方都会产生堵塞，因为都牵涉到网络I/O，线程必须等待数据准备好了（已经从网卡读入到内核缓冲区了，或者已经从用户空间写入内核缓冲区了，参考上面章节的文件I/O），才能继续运行。
+
+从这个例子可以看出一个问题：当服务器线程正在为一个客户端服务时，是不能服务其它客户端的，如果要同时服务多个客户端，就需要启动多个服务器线程/进程，这就是老的一些http服务器使用的模型。然而这会带来一些问题：
+1. CPU个数是非常有限的，启动的线程很多的话，势必会频繁地切换，产生非常严重的上下午切换开销；
+2. 每个线程为了维护一些栈之类的只跟自身相关的信息，也需要占用一定的内存，那么线程一多势必占用大量内存。
+
+加上互联网应用大部分都是一些“慢连接”式的请求，往往大部分时间都在等待数据，只有很少部分时间会传输一点数据（比如在线聊天、网页消息推送...），用堵塞式I/O来处理这些请求，往往到“千”级别的并发就遇到瓶颈了。
+
+## 不同的网络I/O模型
+由于传统的模型行不通了，就需要寻求新的出路。著名的《APUE》里总结了几种网络I/O模型，这里结合一个生活中的例子：学生做试卷。一堆学生在教室里做试卷，假设不规定交卷试卷，学生做完就可以交卷，老师必须拿到试卷回到办公室才能批改。
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/teacher_student.png)
+
+### 1. 同步 + 堵塞式I/O模型
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/network_model_1.png)
+所谓**同步**，即表示把数据从内核空间Copy到用户空间的过程必须线程自己负责；所谓**堵塞**，表示发起系统调用之后进程要block住一直等到数据准备就绪。用学生做试卷的例子来说就是，如果只有1位老师，那么这位老师就要站在某个学生旁边一直盯着他做试卷，直到他做完后，亲手把试卷拿回办公室，期间其余同学如果有做完想交卷都是不行的，因为老师只能盯着一开始那位学生。如果想做到每个学生都能自由交卷，就必须每个学生配备一个老师，这堆老师都站在教室里各盯着一个学生做试卷......傻不傻？
+
+### 2. 同步 + 非堵塞式I/O模型
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/network_model_2.png)
+相比之前的模型，现在发起系统调用之后不用block住了，而是可以马上返回，去做其它事情，之后周期性地检查数据是不是准备好，准备好了就拷贝数据到用户空间。这种模型往往跟“I/O多路复用”结合，即一个线程可以monitor多个网络socket。用学生做试卷的例子来说就是，老师把试卷派下去之后，就回办公室玩手机了，而办公室有一个装置，当有任何学生做完试卷了，就会让这个装置发生变化（比如亮灯），老师打完一盘王者荣耀了，抬起头看看装置亮灯了，就走过去教室把做好的试卷收过来。这样一个老师就可以服务多个学生了。
+
+### 3. 纯异步式I/O模型
+![](https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/network_model_3.png)
+相比之前的模型，这个模型连从内核空间拷贝数据到用户空间都不需要线程自己做了，线程发起请求后留下一个回调接口就可以了，等数据准备好之后就会调用该回调接口。用学生做试卷的例子来说就是，老师派完试卷后就回办公室了，学生做完试卷后自己把试卷拿到办公室给老师。是不是很完美？然而真正OS实现上现在AIO还不成熟，效率甚至还不如NIO。
+
+
 
 
 
