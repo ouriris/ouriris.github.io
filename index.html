@@ -364,7 +364,32 @@
 <p>所以对于前两者，它们的关系大概如下图，但是注意写入或读取的Channel都可以有多个，不仅限于一个。<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/relationship_buffer_channel.png" alt=""></p>
 <h1 id="JavaNIO之三：Buffer"><a href="#JavaNIO之三：Buffer" class="headerlink" title="JavaNIO之三：Buffer"></a>JavaNIO之三：Buffer</h1><h2 id="总体概述"><a href="#总体概述" class="headerlink" title="总体概述"></a>总体概述</h2><p>学过计算机的同学应该不难理解什么是（一般意义上的）Buffer，其实JavaNIO中的Buffer类也是类似：一块尺寸在初始化之后就固定的内存区域，用来暂时存放数据。下面给出Buffer家族的类层次图：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_classes_hierarchy.png" alt=""></p>
 <p>可以看到其实<code>Buffer</code>是一个抽象类，在其之下是对应所有包装类型的抽象Buffer类，其实就是属性中增加了一个对应的原始数据类型的数组（比如<code>DoubleBuffer</code>里面比<code>Buffer</code>多了一个<code>double[]</code>）。再往下就是具体的实现类，基本上每种数据类型都至少对应两种：HeapXXXBuffer（在Java Heap中分配）和DirectXXXBuffer（在本地内存中分配），比如<code>ByteBuffer</code>下面的<code>HeapByteBuffer</code>和<code>DirectByteBuffer</code>。</p>
-<h2 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h2>
+<h2 id="Buffer的重要属性和操作"><a href="#Buffer的重要属性和操作" class="headerlink" title="Buffer的重要属性和操作"></a>Buffer的重要属性和操作</h2><p>首先要说明的是，NIO中一些类的设计思路跟老的BIO类有些不一样，BIO虽然也可以自己new一个<code>byte[]</code>作为InputStream读取数据时的目的地，或OutputStream写数据时的目的地，但往往我们只需要把这个数组传进去read()或write()就行了，不需要知道读到或写到数组的什么地方，之后的工作Stream会帮我们做了。</p>
+<p>然而NIO的使用方式相比起来却有点“<strong>原始</strong>”：管理Buffer读到哪、写到哪的工作不由Channel负责，而是回到Buffer自己身上，由程序员自己控制。最重要的属性（下标）有3个：</p>
+<ol>
+<li><strong>position</strong>：指向当前可被操作的位置（操作为读or写）</li>
+<li><strong>limit</strong>：指向可被操作的边界（如果是写操作，则表示空闲位置的边界；如果是读操作，则表示有效数据的边界）</li>
+<li><strong>capacity</strong>：Buffer的Size，Buffer被初始化之后就是一个固定值</li>
+</ol>
+<p>它们的大小关系是：<strong>position &lt;= limit &lt;= capacity</strong>。只看文字有点抽象难理解，下面会结合图示说明。为了方便理解，你可以认为Buffer具有两种模式：读数据时处于<strong>读模式</strong>，写数据是处于<strong>写模式</strong>。然而实际上Buffer并没有这两种模式的设置，只是你可以逻辑上这样认为。</p>
+<h3 id="1-初始化"><a href="#1-初始化" class="headerlink" title="1.初始化"></a>1.初始化</h3><p>一个刚刚初始化好的空的Buffer（可以理解成做好准备可以写数据了！）长这样：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_1.png" alt=""></p>
+<p><strong>mark</strong>是什么可以先不管。<strong>capacity</strong>就是初始化时设定的Buffer的Size，这里是10。<strong>position</strong>指向的是当前可以被操作的位置，因为我们现在是<strong>写模式</strong>，所以它指向的是当前可以写的一个空位。<strong>limit</strong>则指向可写的边界，可以理解成写到哪就不允许继续往下写了，因为我们这是刚刚创建的空Buffer，默认下可以写到全部满位置，所以这时候<strong>limit</strong> = <strong>capacity</strong> = 10。</p>
+<h3 id="2-顺序写入几个字符"><a href="#2-顺序写入几个字符" class="headerlink" title="2.顺序写入几个字符"></a>2.顺序写入几个字符</h3><p>假设我们现在依次往Buffer里面写入5个字符 H、 e、 l、 l 、o：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buffer.put((<span class="keyword">byte</span>)<span class="string">'H'</span>).put((<span class="keyword">byte</span>)<span class="string">'e'</span>).put((<span class="keyword">byte</span>)<span class="string">'l'</span>).put((<span class="keyword">byte</span>)<span class="string">'l'</span>).put((<span class="keyword">byte</span>)<span class="string">'o'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>则每写入一个字符，<strong>position</strong>都会向右移一个位置，写了5个字符后，它就指向5这个位置。现在它看起来像这样：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_2.png" alt=""></p>
+<h3 id="3-随机写入"><a href="#3-随机写入" class="headerlink" title="3.随机写入"></a>3.随机写入</h3><p>假设我们要直接修改Buffer中的某个位置，可以这样做：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buffer.put(<span class="number">0</span>, (<span class="keyword">byte</span>)<span class="string">'M'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>这样做会把原先位置0的字符‘H’修改为‘M’，并且随机写入不会改变<strong>position</strong>的位置（它还是指向5）。如果这时候我们再顺序写入一个字符‘w’，这个字符是会写在位置5的，现在它看起来像这样：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buffer.put((<span class="keyword">byte</span>)<span class="string">'w'</span>);</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_3.png" alt=""></p>
+<h3 id="4-翻转！变成读模式"><a href="#4-翻转！变成读模式" class="headerlink" title="4.翻转！变成读模式"></a>4.翻转！变成读模式</h3><p><strong>PS：flip操作经常会让刚接触NIO的人费解！所以下面内容请仔细阅读！</strong></p>
+<p>假设现在我们要读出Buffer里的数据，直接调用<code>get()</code>是不行的，因为读操作也要依赖<strong>position</strong>、<strong>limit</strong>，而这时候<strong>position</strong>是指向一个空位置，所以读不出先前写进Buffer里的数据。于是这时候我们需要一个<strong>翻转</strong>操作：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buffer.flip();</span><br></pre></td></tr></table></figure></p>
+<p>flip()执行后产生如下效果：</p>
+<ol>
+<li><strong>当前limit</strong>变成<strong>先前position</strong>的值；</li>
+<li><strong>当前position</strong>变成0。<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/buffer_op_4.png" alt=""><br>可以简单理解成Buffer变成了<strong>读模式</strong>，<strong>position</strong>指向了当前可以被读的字符，<strong>limit</strong>则指向字符串的尾巴（也就是最多允许读到哪里为止）。之后就可以调用<code>get()</code>来读取数据了，每次读<strong>position</strong>都会往右移动一个位置，直到<strong>limit</strong>为止。</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>上面罗列了Buffer的3个重要属性和flip操作，其中理解flip操作非常关键。可以想想，如果我们连续调用两次<code>flip()</code>，会产生什么效果？答案就是这个Buffer变成既不能读也不能写了，因为<strong>position</strong>、<strong>limit</strong>都指向0了。</p>
+<h2 id="Heap-Buffer与Direct-Buffer"><a href="#Heap-Buffer与Direct-Buffer" class="headerlink" title="Heap Buffer与Direct Buffer"></a>Heap Buffer与Direct Buffer</h2><p>一般我们new出来的Buffer都是在Java Heap中分配的空间，在里面的空间可以被GC回收，但有时候我们为了性能考虑，比如不想GC干扰或增加GC压力，可以考虑在Java进程中的Native内存中分配Buffer，这时候的Buffer称为Direct Buffer，可以通过<code>allocateDirect(int capacity)</code>获得。但是分配在Native内存中的Buffer不能被GC回收，所以如果要使用，请参考这里：<a href="https://stackoverflow.com/questions/3496508/deallocating-direct-buffer-native-memory-in-java-for-jogl/26777380#26777380" title="Deallocating Direct Buffer Native Memory in Java for JOGL" target="_blank" rel="noopener">Deallocating Direct Buffer Native Memory in Java for JOGL</a></p>
+<p>Heap Buffer与Direct Buffer在Java进程中的布局图如下所示：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2018-02-25/java_memory_layout.png" alt=""></p>
+
           
         
       
