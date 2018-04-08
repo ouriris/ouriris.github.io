@@ -17,8 +17,7 @@ Author: Mike Xie
 # 研究背景
 
 
-```
-
+```java
 /**
  *  哪个会跑的更快？
  */
@@ -62,7 +61,7 @@ public class PrimitiveVSReferenceType {
 ---
 
 # java 内存模型？
-[java是在java虚拟机上运行，一般地大家讲到的Java内存其实就是Jvm内存](http://gityuan.com/2016/01/09/java-memory/)
+java是在java虚拟机上运行，一般地大家讲到的Java内存其实就是Jvm内存
 
 ![image](https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/24432D8C2A0746D899E71BA38717B291/18756)
 
@@ -126,7 +125,7 @@ HotSpot的垃圾收集器可以像管理Java堆一样管理这部分内存，能
 
 ##### 例子
 
-```
+```java
  public class GcDemo {
 
     public static void main(String[] args) {
@@ -150,9 +149,9 @@ class GcObject{
 ##### 分析
 java内存模型
 
-![image](http://img0.ph.126.net/rVy_ASQZ9HgQTsftuEjwEQ==/6632149685142356217.png)
+![image](../uploads/2018-03-23/pic-1.png)
 
-[再回到前面代码GcDemo的main方法共分为6个步骤](http://blog.163.com/ittfxin@126/blog/static/11067486320171345420320/)：
+再回到前面代码GcDemo的main方法共分为6个步骤
 
 1. Step1：GcObject实例1的引用计数加1，实例1的引用计数=1；
 2. Step2：GcObject实例2的引用计数加1，实例2的引用计数=1；
@@ -163,7 +162,7 @@ java内存模型
 
 接下来继续结果图：
 
-![image](http://img2.ph.126.net/rneeyYDbA6E5Zaq9UEIyWA==/6631945175979591668.png)
+![image](../uploads/2018-03-23/step3-step4.png)
 
 5. Step5：栈帧中obj1不再指向Java堆，GcObject实例1的引用计数减1，结果为1；
 6. Step6：栈帧中obj2不再指向Java堆，GcObject实例2的引用计数减1，结果为1。
@@ -228,7 +227,7 @@ class GcObject{
 }
 ```
 ##### 分析
-![image](https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/919765A6DAB34836B83E16529E3ED578/18740)
+![image](../uploads/2018-03-23/pic-3.png)
 
 从上图，**reference1、reference2、reference3都是GC Roots**，可以看出：
 1. reference1-> 对象实例1；
