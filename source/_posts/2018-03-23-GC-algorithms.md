@@ -36,18 +36,17 @@ collector指的就是垃圾收集器，而mutator是指除了垃圾收集器之�
 比如说我们应用程序本身。mutator的职责一般是NEW(分配内存),READ(从内存中读取内容),WRITE(将内容写入内存)，而collector则就是回收不再使用的内存来供mutator进行NEW操作的使用
 
 #### 可达性
-[从mutator根对象开始进行遍历，可以被访问到的对象都称为是可达对象。这些对象也是mutator(你的应用程序)正在使用的对象](https://www.jianshu.com/p/b0f5d21fe031)
-
+从mutator根对象开始进行遍历，可以被访问到的对象都称为是可达对象。这些对象也是mutator(你的应用程序)正在使用的对象
 
 ### 原理
-[顾名思义，标记-清除算法分为两个阶段，标记(mark)和清除(sweep).](https://www.jianshu.com/p/b0f5d21fe031)
+顾名思义，标记-清除算法分为两个阶段，标记(mark)和清除(sweep).
 > 基于可达性分析，回头看看可达性分析存在那几个依据
 
 
 #### 标记阶段
 在标记阶段，collector从mutator根对象开始进行遍历，对从mutator根对象 **可以访问到的对象** 都打上一个标识，一般是在对象的header中，将其记录为可达对象。
 
-![image](https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/6EFDD88D2C7E46B9B73DDC87D0755577/17933)
+![image](../uploads/2018-03-23/mark-phase.png)
 
 从上图我们可以看到
 1. 在Mark阶段，从根对象1可以访问到B对象，从B对象又可以访问到E对象，所以B,E对象都是可达的。
@@ -58,7 +57,7 @@ collector指的就是垃圾收集器，而mutator是指除了垃圾收集器之�
 collector对堆内存(heap memory)**从头到尾进行线性的遍历**，如果发现某个对象没有标记为可达对象-通过读取对象的header信息，则就将其回收
 
 
-![image](https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/2F5CF8DE4DE046D3BF47EA113EE6608E/17935)
+![image](../uploads/2018-03-23/sweep-phase.png)
 
 到了Sweep阶段，所有非可达对象都会被collector回收。
 
@@ -71,7 +70,7 @@ collector对堆内存(heap memory)**从头到尾进行线性的遍历**，如果
 
 下面是mutator进行NEW操作的伪代码：
 
-```
+```java
 New():
     ref <- allocate()  //分配新的内存到ref指针
     if ref == null
@@ -88,7 +87,7 @@ atomic collect():
 ```
 
 标记算法
-```
+```java
 markFromRoots():
     worklist <- empty
     for each fld in Roots  //遍历所有mutator根对象
@@ -137,7 +136,7 @@ sweep(start,end):
 
 解决内部碎片的问题
 
-内存碎片一直是 **非移动垃圾回收器** [(指在垃圾回收时不进行对象的移动)的一个问题，比如说在前面的标记-清除垃圾回收器就有这样的问题。而标记-压缩垃圾回收算法能够有效的缓解这一问题。](https://www.jianshu.com/p/698eb5e1ccb9)
+内存碎片一直是 **非移动垃圾回收器** (指在垃圾回收时不进行对象的移动)的一个问题，比如说在前面的标记-清除垃圾回收器就有这样的问题。而标记-压缩垃圾回收算法能够有效的缓解这一问题。
 
 
 ### 算法原理
@@ -232,7 +231,7 @@ relocate(start,end)
 
 ###### 示例图
 
-![image](http://www.processon.com/chart_image/530175170cf2a3dc99de59d9.png)
+![image](../uploads/2018-03-23/compact-first-iterator.png)
 
 
 ---
@@ -246,7 +245,7 @@ relocate(start,end)
 
 ###### 代码
 
-```
+```java
 updateReferences(start,end)
     for each fld in Roots //先更新mutator根对象所引用的对象关系
         ref <- *fld
@@ -271,7 +270,7 @@ updateReferences(start,end)
 
 ###### 示例图
 
-![image](http://www.processon.com/chart_image/53006f070cf2a3dc99ddbc95.png)
+![image](../uploads/2018-03-23/compact-second-iterator.png)
 
 
 
@@ -381,13 +380,13 @@ remove(worklist):
 
 ## 引用计数算法
 
-1. [reference counting](http://www.memorymanagement.org/glossary/r.html#reference.counting)
+1. reference counting
 
 2. 现代编程语言比如Lisp，Python，Ruby等的垃圾收集算法采用的就是引用计数算法
 
 ### 算法原理
 
-> 通过在 **对象头** 中分配一个空间来保存该对象被引用的次数。如果该对象被其它对象引用，则它的引用计数加一，如果删除对该对象的引用，那么它的引用计数就减一，当该对象的引用计数为0时，那么该对象就会被[回收](https://www.jianshu.com/p/1d5fa7f6035c)
+> 通过在 **对象头** 中分配一个空间来保存该对象被引用的次数。如果该对象被其它对象引用，则它的引用计数加一，如果删除对该对象的引用，那么它的引用计数就减一，当该对象的引用计数为0时，那么该对象就会被回收
 
 ### 例子
 比如说，当我们编写以下代码时，
@@ -398,12 +397,12 @@ String p = new String("abc")
 
 abc这个字符串对象的引用计数值为1.（rc = reference count）
 
-![image](http://www.processon.com/chart_image/53080dca0cf262b559f77618.png)
+![image](../uploads/2018-03-23/p-reference.png)
  
 而当我们 **去除** abc字符串对象的引用时，则abc字符串对象的引用计数减1
 
 
-```
+```java
 p = null // = null, 去除对象引用的一种方式
 ```
 
@@ -424,7 +423,7 @@ p = null // = null, 去除对象引用的一种方式
 
 #### 伪代码
 
-```
+```java
 New(): //分配内存
     ref <- allocate()
     if ref == null
@@ -456,7 +455,7 @@ deleteReference(ref):
 2. 假设我们有两个变量p和q，它们分别指向不同的对象，当我们将他们指向同一个对象时，下面的图展示了p和q变量指向的两个对象的引用计数的变化。
 
 
-```
+```java
 String p = new String("abc")
 String q = new String("def")
 p = q
