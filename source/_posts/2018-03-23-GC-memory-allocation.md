@@ -12,7 +12,7 @@ Author: Mike Xie
 ---
 # 内存分配
 
-[在JVM中，内存是按照分代进行组织的](https://www.jianshu.com/p/778dd3848196)。
+在JVM中，内存是按照分代进行组织的。
 
 垃圾回收的时候，真没有必要扫描整个堆
 
@@ -56,7 +56,7 @@ Author: Mike Xie
 
 ## Minor GC
 1. 当Eden区满时，触发Minor GC
-2. [又称新生代GC，指发生在新生代的垃圾收集动作](http://blog.csdn.net/tjiyu/article/details/53983650)；
+2. 又称新生代GC，指发生在新生代的垃圾收集动作
 3. 因为Java对象大多是朝生夕灭，**所以Minor GC非常频繁，一般回收速度也比较快**
 
 ## Full GC
