@@ -92,21 +92,21 @@
 
 
 
-<meta name="description" content="Author: Yellow 进击的Java新人Week.1学习笔记Week.1的课程主要包括以下几部分:  有符号整数在计算机中的表示、不同进制之间的转换； Java中static、final关键字； Java中自动装箱拆箱的坑  有符号整数在计算机中的表示、不同进制之间的转换1. 原码、反码与补码对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能">
+<meta name="description" content="Author: Mike Xie  内存分配在JVM中，内存是按照分代进行组织的。 垃圾回收的时候，真没有必要扫描整个堆   此处非堆内存指代的是方法区  堆内存分为年轻代和年老代，非堆内存主要是Permanent区域，主要用于存储一些类的元数据，常量池等信息。 而年轻代又分为两种，一种是Eden区域，另外一种是两个大小对等的Survivor区域。之所以将Java内存按照分代进行组织 主要是基于">
 <meta name="keywords" content="Java,进击的Java新人">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记)">
-<meta property="og:url" content="https://ouriris.github.io/2017/11/18/2017-11-18-jj-java-week-1/index.html">
+<meta property="og:title" content="Java 垃圾回收机制之内存分配">
+<meta property="og:url" content="https://ouriris.github.io/2018/03/23/2018-03-23-GC-memory-allocation/index.html">
 <meta property="og:site_name" content="OurIris">
-<meta property="og:description" content="Author: Yellow 进击的Java新人Week.1学习笔记Week.1的课程主要包括以下几部分:  有符号整数在计算机中的表示、不同进制之间的转换； Java中static、final关键字； Java中自动装箱拆箱的坑  有符号整数在计算机中的表示、不同进制之间的转换1. 原码、反码与补码对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能">
+<meta property="og:description" content="Author: Mike Xie  内存分配在JVM中，内存是按照分代进行组织的。 垃圾回收的时候，真没有必要扫描整个堆   此处非堆内存指代的是方法区  堆内存分为年轻代和年老代，非堆内存主要是Permanent区域，主要用于存储一些类的元数据，常量池等信息。 而年轻代又分为两种，一种是Eden区域，另外一种是两个大小对等的Survivor区域。之所以将Java内存按照分代进行组织 主要是基于">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Oct2Bin.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Bin2Oct.png">
-<meta property="og:updated_time" content="2018-02-23T09:31:16.750Z">
+<meta property="og:image" content="http://www.processon.com/chart_image/53698d6e0cf21db1c3ec9394.png">
+<meta property="og:image" content="http://www.processon.com/chart_image/536999160cf21db1c3ecd182.png">
+<meta property="og:updated_time" content="2018-04-09T00:45:12.940Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记)">
-<meta name="twitter:description" content="Author: Yellow 进击的Java新人Week.1学习笔记Week.1的课程主要包括以下几部分:  有符号整数在计算机中的表示、不同进制之间的转换； Java中static、final关键字； Java中自动装箱拆箱的坑  有符号整数在计算机中的表示、不同进制之间的转换1. 原码、反码与补码对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Oct2Bin.jpg">
+<meta name="twitter:title" content="Java 垃圾回收机制之内存分配">
+<meta name="twitter:description" content="Author: Mike Xie  内存分配在JVM中，内存是按照分代进行组织的。 垃圾回收的时候，真没有必要扫描整个堆   此处非堆内存指代的是方法区  堆内存分为年轻代和年老代，非堆内存主要是Permanent区域，主要用于存储一些类的元数据，常量池等信息。 而年轻代又分为两种，一种是Eden区域，另外一种是两个大小对等的Survivor区域。之所以将Java内存按照分代进行组织 主要是基于">
+<meta name="twitter:image" content="http://www.processon.com/chart_image/53698d6e0cf21db1c3ec9394.png">
 
 
 
@@ -135,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="https://ouriris.github.io/2017/11/18/2017-11-18-jj-java-week-1/"/>
+  <link rel="canonical" href="https://ouriris.github.io/2018/03/23/2018-03-23-GC-memory-allocation/"/>
 
 
 
 
 
-  <title>Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记) | OurIris</title>
+  <title>Java 垃圾回收机制之内存分配 | OurIris</title>
   
 
 
@@ -274,7 +274,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/18/2017-11-18-jj-java-week-1/">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/03/23/2018-03-23-GC-memory-allocation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -291,7 +291,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记)</h2>
+          <h2 class="post-title" itemprop="name headline">Java 垃圾回收机制之内存分配</h2>
         
 
         <div class="post-meta">
@@ -303,8 +303,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-18T17:37:07+08:00">
-                2017-11-18
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-23T16:15:04+08:00">
+                2018-03-23
               </time>
             
 
@@ -346,41 +346,47 @@
       
 
       
-        <p>Author: Yellow</p>
-<h1 id="进击的Java新人Week-1学习笔记"><a href="#进击的Java新人Week-1学习笔记" class="headerlink" title="进击的Java新人Week.1学习笔记"></a>进击的Java新人Week.1学习笔记</h1><p>Week.1的<a href="https://zhuanlan.zhihu.com/p/24393775" title="课程" target="_blank" rel="noopener">课程</a>主要包括以下几部分:</p>
+        <p>Author: Mike Xie</p>
+<hr>
+<h1 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h1><p>在JVM中，内存是按照分代进行组织的。</p>
+<p>垃圾回收的时候，真没有必要扫描整个堆</p>
+<p><img src="http://www.processon.com/chart_image/53698d6e0cf21db1c3ec9394.png" alt="image"></p>
+<blockquote>
+<p>此处非堆内存指代的是方法区</p>
+</blockquote>
+<p>堆内存分为年轻代和年老代，非堆内存主要是Permanent区域，主要用于存储一些类的元数据，常量池等信息。</p>
+<p>而年轻代又分为两种，一种是Eden区域，另外一种是两个大小对等的Survivor区域。之所以将Java内存按照分代进行组织</p>
+<p>主要是基于</p>
 <ol>
-<li>有符号整数在计算机中的表示、不同进制之间的转换；</li>
-<li>Java中<code>static</code>、<code>final</code>关键字；</li>
-<li>Java中<strong>自动装箱拆箱</strong>的坑</li>
+<li>这样一个“弱假设-大多数对象都在年轻时候死亡。</li>
+<li>只有很少的由老对象（创建时间较长的对象）指向新生对象的引用</li>
 </ol>
-<h1 id="有符号整数在计算机中的表示、不同进制之间的转换"><a href="#有符号整数在计算机中的表示、不同进制之间的转换" class="headerlink" title="有符号整数在计算机中的表示、不同进制之间的转换"></a>有符号整数在计算机中的表示、不同进制之间的转换</h1><h2 id="1-原码、反码与补码"><a href="#1-原码、反码与补码" class="headerlink" title="1. 原码、反码与补码"></a>1. 原码、反码与补码</h2><p>对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能表示的数的最大绝对值要比无符号数小一半。已Java中的byte来作为例子，由于其长度为8bit，所以其表示范围为-128~127（即-2^7 ~ 2^7-1，为什么右边要减一？因为“0”占了一个位置啊）。</p>
-<p>对于正数来说，它的<strong>原码、反码、补码都等于其二进制形式</strong>。</p>
-<p>对于负数来说，它的原码、反码、补码是不同的：</p>
-<ol>
-<li>原码：把符号位设为1，后面的数字等于这个负数的绝对值，例如-15就变成了10001111。</li>
-<li>反码：在原码的基础上，保持符号位不变，后面的数字全部取反，例如-15就变成了11110000。</li>
-<li>补码：它是由反码加1得到的。例如，-1的反码是11111110，再加1就是11111111。</li>
+<p>同时，将内存按照分代进行组织，使得我们可以在不同的分代上使用不同的垃圾回收算法，使得整个内存的垃圾回收更加有效。</p>
+<h2 id="对象优先在-Eden-分配"><a href="#对象优先在-Eden-分配" class="headerlink" title="对象优先在 Eden 分配"></a>对象优先在 Eden 分配</h2><h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><p>绝大多数最新被创建的对象会被分配到这里，由于大部分对象在创建后会很快变得不可到达，所以很多对象被创建在新生代，然后消失。对象从这个区域消失的过程我们称之为”minor GC“。</p>
+<h2 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h2><h3 id="大对象"><a href="#大对象" class="headerlink" title="大对象"></a>大对象</h3><p>所谓大对象是指，需要大量连续内存空间的Java对象，最典型的大对象就是那种很长的字符串以及数组大对象对虚拟机的内存分配来说就是一个坏消息，<strong>经常出现大对象容易导致内存还有不少内存空间时就不得不提前触发垃圾收集以获取足够的连续空间来“安置”它们。</strong></p>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><p>对象没有变得不可达，并且从新生代中存活下来，会被拷贝到这里。其所占用的空间要比新生代多。也正由于其相对较大的空间，发生在老年代上的GC要比新生代少得多。对象从老年代中消失的过程，我们称之为”major GC“</p>
+<h2 id="长期存活的对象将进入老年代"><a href="#长期存活的对象将进入老年代" class="headerlink" title="长期存活的对象将进入老年代"></a>长期存活的对象将进入老年代</h2><p> 虚拟机给每个对象定义了一个<strong>对象年龄计数器</strong>，如果对象在Eden出生并经历过第一次Minor GC后仍然存活，并且被Survivor容纳的话，将被移动到Survivor空间中，并且对象年龄为1.对象在Survivor区中每熬过一次Minor GC，年龄增加一岁，当它的年龄增加到一定程度(默认为15岁)，就将会被晋升到老年代中。</p>
+<h2 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h2><p> 在发生Minor GC之前，虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果这个条件成立，那么Minor GC可以确保是安全的。如果不成立，则虚拟机会查看设置值是否允许担保失败。如果允许，那么会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的<strong>平均大小</strong>，如果大于，将尝试着进行一次Minor GC，尽管是有风险的；如果小于或者设置值不允许担保失败，则需要改为进行一次Full GC。</p>
+<h1 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h1><h2 id="Minor-GC"><a href="#Minor-GC" class="headerlink" title="Minor GC"></a>Minor GC</h2><ol>
+<li>当Eden区满时，触发Minor GC</li>
+<li>又称新生代GC，指发生在新生代的垃圾收集动作</li>
+<li>因为Java对象大多是朝生夕灭，<strong>所以Minor GC非常频繁，一般回收速度也比较快</strong></li>
 </ol>
-<p>使用补码的好处包括，0和-0的表示是相同的，正负数可以直接进行加减法运算，不必再做额外的转换。而原码和反码则不具备这样的优点。所以现代计算机都是使用补码来表示负数。</p>
-<h2 id="2-不同进制之间的转换"><a href="#2-不同进制之间的转换" class="headerlink" title="2. 不同进制之间的转换"></a>2. 不同进制之间的转换</h2><p>首先，十进制和二进制的互换是最简单的。基本上十进制 -&gt; 二进制就是通过除法求余数：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Oct2Bin.jpg" alt=""></p>
-<p>二进制 -&gt; 十进制则是通过乘法：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Bin2Oct.png" alt=""></p>
-<p>对于任意进制之间的转换，基本就是先转成10进制, 再由10进制转换成目标进制的方法。</p>
-<h2 id="3-Java中数值类型的隐式转换"><a href="#3-Java中数值类型的隐式转换" class="headerlink" title="3. Java中数值类型的隐式转换"></a>3. Java中数值类型的隐式转换</h2><p>平时写程序时，如果二元运算符两边都是数字，则要特别注意其中隐式转换的坑：</p>
-<ol>
-<li>Byte.MAX_VALUE + 1 会隐式向上转型成int（字面量“1”被认为是int）</li>
-<li>向上提升时会保持符号位</li>
-<li>向下转型时会丢失精度或符号位</li>
-<li>byte -&gt; short,char → int → long → float → double（从左往右精度不断上升）</li>
-<li>boolean不能转换成数值</li>
+<h2 id="Full-GC"><a href="#Full-GC" class="headerlink" title="Full GC"></a>Full GC</h2><ol>
+<li><p>调用System.gc时，系统建议执行Full GC，但是不必然执行</p>
+</li>
+<li><p>老年代空间不足</p>
+</li>
+<li><p>方法去空间不足</p>
+</li>
+<li><p>通过Minor GC后进入老年代的平均大小大于老年代的可用内存</p>
+</li>
+<li><p>由Eden区、From Space区向To Space区复制时，对象大小大于To Space可用内存，则把该对象转存到老年代，且老年代的可用内存小于该对象大小</p>
+</li>
 </ol>
-<h2 id="4-“老鼠喝毒药”的解法"><a href="#4-“老鼠喝毒药”的解法" class="headerlink" title="4. “老鼠喝毒药”的解法"></a>4. “老鼠喝毒药”的解法</h2><p>没看过题目的可以先看<a href="https://zhuanlan.zhihu.com/p/24351902" title="题目" target="_blank" rel="noopener">题目</a>。</p>
-<p>本质上是用每一只老鼠表示二进制的每一个bit, 则10只老鼠能组合成2^10=1024种组合.</p>
-<p>则1000杯水可以按序号用二进制编码: </p>
-<p>第1杯 -&gt; 00000 00001</p>
-<p>第2杯 -&gt; 00000 00010</p>
-<p>第3杯 -&gt; 00000 00011</p>
-<p>….</p>
-<p>然后第n杯酒就让二进制bit为1的老鼠喝, 看看谁挂掉, 由挂掉老鼠的bit就知道是对应哪杯水</p>
+<h2 id="年轻代的垃圾回收"><a href="#年轻代的垃圾回收" class="headerlink" title="年轻代的垃圾回收"></a>年轻代的垃圾回收</h2><p>在年轻代上采用的垃圾回收算法是 “<strong>Mark-Copy</strong>” 算法，并不同于我们前面所了解的任何一种基本垃圾回收算法，但是Mark算法是一样的，基于根对象找到所有的可达对象，具体可看Mark-Sweep算法中的Mark步骤. 而对于Copy算法，它仅仅是简单的将<strong>符合一定年龄的对象从一个分代拷贝到另一个分代</strong>。</p>
+<p>具体的回收过程如下</p>
+<p><img src="http://www.processon.com/chart_image/536999160cf21db1c3ecd182.png" alt="image"></p>
 
       
     </div>
@@ -413,14 +419,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/02/25/2018-02-25-Java-nio-basic/" rel="next" title="Java NIO 基础白话文解释">
+                <i class="fa fa-chevron-left"></i> Java NIO 基础白话文解释
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/11/22/2017-11-22-java-method-process/" rel="prev" title="Java--方法调用(进击的Java新人Week.3学习笔记)">
-                Java--方法调用(进击的Java新人Week.3学习笔记) <i class="fa fa-chevron-right"></i>
+              <a href="/2018/03/23/2018-03-23-GC-judge-whether-object-is-survived/" rel="prev" title="Java 垃圾回收机制之判断对象存活的两种方法">
+                Java 垃圾回收机制之判断对象存活的两种方法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -550,7 +560,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进击的Java新人Week-1学习笔记"><span class="nav-number">1.</span> <span class="nav-text">进击的Java新人Week.1学习笔记</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#有符号整数在计算机中的表示、不同进制之间的转换"><span class="nav-number">2.</span> <span class="nav-text">有符号整数在计算机中的表示、不同进制之间的转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-原码、反码与补码"><span class="nav-number">2.1.</span> <span class="nav-text">1. 原码、反码与补码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-不同进制之间的转换"><span class="nav-number">2.2.</span> <span class="nav-text">2. 不同进制之间的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Java中数值类型的隐式转换"><span class="nav-number">2.3.</span> <span class="nav-text">3. Java中数值类型的隐式转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-“老鼠喝毒药”的解法"><span class="nav-number">2.4.</span> <span class="nav-text">4. “老鼠喝毒药”的解法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存分配"><span class="nav-number">1.</span> <span class="nav-text">内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象优先在-Eden-分配"><span class="nav-number">1.1.</span> <span class="nav-text">对象优先在 Eden 分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新生代"><span class="nav-number">1.1.1.</span> <span class="nav-text">新生代</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#大对象直接进入老年代"><span class="nav-number">1.2.</span> <span class="nav-text">大对象直接进入老年代</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#大对象"><span class="nav-number">1.2.1.</span> <span class="nav-text">大对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#老年代"><span class="nav-number">1.2.2.</span> <span class="nav-text">老年代</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#长期存活的对象将进入老年代"><span class="nav-number">1.3.</span> <span class="nav-text">长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#空间分配担保"><span class="nav-number">1.4.</span> <span class="nav-text">空间分配担保</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾回收"><span class="nav-number">2.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Minor-GC"><span class="nav-number">2.1.</span> <span class="nav-text">Minor GC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Full-GC"><span class="nav-number">2.2.</span> <span class="nav-text">Full GC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#年轻代的垃圾回收"><span class="nav-number">2.3.</span> <span class="nav-text">年轻代的垃圾回收</span></a></li></ol></li></ol></div>
             
 
           </div>

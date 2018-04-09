@@ -271,6 +271,815 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/01/08/2018-01-08-AVL-tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/08/2018-01-08-AVL-tree/" itemprop="url">数据结构:AVL树(进击的Java新人Week.6学习笔记)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-08T10:11:06+08:00">
+                2018-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Author: Mike</p>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/A77E8A066F97480ABB84FEE8D10055FF/12188" alt="image"></p>
+<ul>
+<li>平衡二叉树基于二叉查找树的特性，在查找的过程中，在每一层只会访问一个结点，也即平衡二叉树的时间复杂度与树的高度有关。<br>对于一颗 <strong>满二叉树</strong>，时间复杂度为</li>
+</ul>
+<blockquote>
+<p><img src="https://camo.githubusercontent.com/62bab5658be3d287b7b002a2b8473f8d735e9784/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f44354332343330423236373934313641384446344632364541373735344445342f3132323132" alt="image"></p>
+</blockquote>
+<blockquote>
+<p>故 <strong>O(n) = logN</strong>;</p>
+</blockquote>
+<ul>
+<li>树的层数越少，查找数据的平均查找时间就会越少<blockquote>
+<p>  平衡二叉树是具有以下性质的二叉查找树：对于树中的任意一个结点，都有该结点的左子树的高度与右子树的高度之差的绝对值小于2。与普通的BST相比，AVL树只是多定义了旋转操作，使得当左右子树的<strong>高度差的绝对值大于或者等于2时</strong>，平衡树可以<strong>自动地进行树形调整</strong>，以重新满足上述性质。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><p>当所给予的关键字序列是有顺序的时候，将会出现如下尴尬的二叉树。树的结构会变为单向左子树或者单向右子树，二叉树退化为单向链表，时间复杂度为 <strong>O(n)</strong>，<br><img src="https://camo.githubusercontent.com/e578974e8056404ada9fce1534e637baba3db314/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f41393231423433423241373134364342414341334544323337354439463339302f3132323331" alt="image"></p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><blockquote>
+<p>尽可能降低树的高度，主要是通过二叉树的旋转来达到降低树高度的目的，也就是接下来讨论的内容。</p>
+</blockquote>
+<h1 id="旋转"><a href="#旋转" class="headerlink" title="旋转"></a>旋转</h1><p>先来看几个概念</p>
+<h2 id="平衡因子"><a href="#平衡因子" class="headerlink" title="平衡因子"></a><a href="https://baike.baidu.com/item/%E5%B9%B3%E8%A1%A1%E5%9B%A0%E5%AD%90/234504?fr=aladdin" target="_blank" rel="noopener">平衡因子</a></h2><blockquote>
+<p>某结点的 <strong>左子树</strong> 与 <strong>右子树</strong> 的高度(深度) 差 即为该结点的<strong>平衡因子</strong>（BF,Balance Factor）。平衡二叉树上所有结点的平衡因子只可能是 <strong>-1，0 或 1</strong>。<br>举例子如下, 结点旁边数据即为平衡因子</p>
+</blockquote>
+<p><img src="https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=32debc79b6de9c82b268f1dd0de8eb6f/4bed2e738bd4b31c2787ccfb82d6277f9e2ff833.jpg" alt="image"></p>
+<h2 id="最小不平衡子树"><a href="#最小不平衡子树" class="headerlink" title="最小不平衡子树"></a>最小不平衡子树</h2><blockquote>
+<p>最小不平衡子树以离插入结点最近、且平衡因子绝对值大于 1 的结点作根结点的子树。</p>
+</blockquote>
+<h2 id="结点失衡"><a href="#结点失衡" class="headerlink" title="结点失衡"></a><a href="http://blog.csdn.net/lemon_tree12138/article/details/50393548" target="_blank" rel="noopener">结点失衡</a></h2><p>调整失衡结点的手段为旋转操作，一共有日下四种旋转</p>
+<ul>
+<li><p><strong>LL</strong> 在结点A的左孩子（L）的左子树（L）插入新结点导致不平衡 –&gt; LL单右旋操作<br><img src="http://img.blog.csdn.net/20151225154426299?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+</li>
+<li><p><strong>RR</strong> 在结点A的右孩子（R）的右子树（R）插入新结点导致不平衡 –&gt; RR单左旋操作<br><img src="http://img.blog.csdn.net/20151225155207258?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+</li>
+<li><p><strong>LR</strong> 在结点A的左孩子（L）的右子树（R）插入新结点导致不平衡 –&gt; LR旋转。<br>可以先假设在D结点有一个右孩子，为null，也即虚构的右孩子，由此可见 <strong>LR 旋转 = LL旋转 + RR旋转</strong></p>
+</li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/4586cb287b9439e85e4dad4e380d85444839d141/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f41373135463143333142414134334346423742323046454630303837394530372f3132323933" alt="image"></p>
+<p>具体例子</p>
+<p><img src="http://img.blog.csdn.net/20151225155001696?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<ul>
+<li><strong>RL</strong> 在结点A的右孩子（R）的左子树（L）插入新结点导致不平衡 –&gt; RL旋转，与LR旋转的理论类似，<strong>RL 旋转 = RR旋转 + LL旋转</strong></li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/2a2d6d4c4c617db9756acf391c36738eb2f71e8d/68747470733a2f2f6e6f74652e796f7564616f2e636f6d2f7977732f7075626c69632f7265736f757263652f61626331396430633837633732633534356666313033386336383066333536342f786d6c6e6f74652f43434134424335333837343534394133394134334443353238463632433435342f3132333136" alt="image"></p>
+<p>具体例子<br><img src="http://img.blog.csdn.net/20151225155455361?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<h1 id="操作"><a href="#操作" class="headerlink" title="操作"></a><a href="http://blog.csdn.net/javazejian/article/details/53892797" target="_blank" rel="noopener">操作</a></h1><p>平衡二叉树的增删查改操作<br><a href="https://zhuanlan.zhihu.com/p/25320155?refer=hinus" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/25320155?refer=hinus</a></p>
+<h2 id="结点定义"><a href="#结点定义" class="headerlink" title="结点定义"></a>结点定义</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AVLNode</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Comparable</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> AVLNode&lt;T&gt; left;</span><br><span class="line">    <span class="keyword">public</span> AVLNode&lt;T&gt; right;</span><br><span class="line">    <span class="keyword">public</span> T data;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> height;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AVLNode</span><span class="params">(T data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.data = data;</span><br><span class="line">        <span class="keyword">this</span>.left = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">this</span>.right = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">this</span>.height = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="LL"><a href="#LL" class="headerlink" title="LL"></a>LL</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/3B31A11B870245A5A18AFB41246DA1FE/12345" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 左左单旋转(LL旋转) w变为x的根结点, x变为w的右子树</span><br><span class="line">     *</span><br><span class="line">     * @param x</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private AVLNode&lt;T&gt; singleRotateLeft(AVLNode&lt;T&gt; x) &#123;</span><br><span class="line">        //把w结点旋转为根结点</span><br><span class="line">        AVLNode&lt;T&gt; w = x.left;</span><br><span class="line">        //同时w的右子树变为x的左子树</span><br><span class="line">        x.left = w.right;</span><br><span class="line">        //x变为w的右子树</span><br><span class="line">        w.right = x;</span><br><span class="line">        //重新计算x/w的高度</span><br><span class="line">        x.height = Math.max(height(x.left), height(x.right)) + 1;</span><br><span class="line">        w.height = Math.max(height(w.left), x.height) + 1;</span><br><span class="line">        return w;//返回新的根结点</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="RR"><a href="#RR" class="headerlink" title="RR"></a>RR</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/A4A3F0E6598E4D8C9ED5542A70E90B4C/12347" alt="image"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 右右单旋转(RR旋转) x变为w的根结点, w变为x的左子树</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private AVLNode&lt;T&gt; singleRotateRight(AVLNode&lt;T&gt; w) &#123;</span><br><span class="line"></span><br><span class="line">        AVLNode&lt;T&gt; x = w.right;</span><br><span class="line"></span><br><span class="line">        w.right = x.left;</span><br><span class="line">        x.left = w;</span><br><span class="line"></span><br><span class="line">        //重新计算x/w的高度</span><br><span class="line">        x.height = Math.max(height(x.left), w.height) + 1;</span><br><span class="line">        w.height = Math.max(height(w.left), height(w.right)) + 1;</span><br><span class="line"></span><br><span class="line">        //返回新的根结点</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="LR"><a href="#LR" class="headerlink" title="LR"></a>LR</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/BF277577705F449BA4CAE1B372BA8EAE/12349" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 左右旋转(LR旋转) x(根) w y 结点 把y变成根结点</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">private AVLNode&lt;T&gt; doubleRotateWithLeft(AVLNode&lt;T&gt; x)&#123;</span><br><span class="line">    //w先进行RR旋转</span><br><span class="line">    x.left=singleRotateRight(x.left);</span><br><span class="line">    //再进行x的LL旋转</span><br><span class="line">    return singleRotateLeft(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="RL"><a href="#RL" class="headerlink" title="RL"></a>RL</h2><p><img src="https://note.youdao.com/yws/public/resource/abc19d0c87c72c545ff1038c680f3564/xmlnote/35D5BA6C7F4846CC81376720E628BFB7/12351" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 右左旋转(RL旋转)</span><br><span class="line"> * @param w</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">private AVLNode&lt;T&gt; doubleRotateWithRight(AVLNode&lt;T&gt; x)&#123;</span><br><span class="line">    //先进行LL旋转</span><br><span class="line">    x.right=singleRotateLeft(x.right);</span><br><span class="line">    //再进行RR旋转</span><br><span class="line">    return singleRotateRight(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h2><blockquote>
+<p>与BST（二叉查找树）的插入实现原理一样，使用递归算法，根据值大小查找到插入位置，然后进行插入操作，插入完成后，我们需要进行平衡判断，评估子树是否需要进行平衡修复，需要则利用上述的四种情景套入代码即可，最后要记得重新计算插入结点路径上的高度</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">* 插入方法</span><br><span class="line">* @param data</span><br><span class="line">*/</span><br><span class="line">@Override</span><br><span class="line">public void insert(T data) &#123;</span><br><span class="line">   if (data==null)&#123;</span><br><span class="line">       throw new RuntimeException(&quot;data can\&apos;t not be null &quot;);</span><br><span class="line">   &#125;</span><br><span class="line">   this.root=insert(data,root);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private AVLNode&lt;T&gt; insert(T data , AVLNode&lt;T&gt; p)&#123;</span><br><span class="line"></span><br><span class="line">   //说明已没有孩子结点,可以创建新结点插入了.</span><br><span class="line">   if(p==null)&#123;</span><br><span class="line">       p=new AVLNode&lt;T&gt;(data);</span><br><span class="line">   &#125;else if(data.compareTo(p.data)&lt;0)&#123;//向左子树寻找插入位置</span><br><span class="line">       p.left=insert(data,p.left);</span><br><span class="line"></span><br><span class="line">       //插入后计算子树的高度,等于2则需要重新恢复平衡,由于是左边插入,左子树的高度肯定大于等于右子树的高度</span><br><span class="line">       if(height(p.left)-height(p.right)==2)&#123;</span><br><span class="line">           //判断data是插入点的左孩子还是右孩子</span><br><span class="line">           if(data.compareTo(p.left.data)&lt;0)&#123;</span><br><span class="line">               //进行LL旋转</span><br><span class="line">               p=singleRotateLeft(p);</span><br><span class="line">           &#125;else &#123;</span><br><span class="line">               //进行左右旋转</span><br><span class="line">               p=doubleRotateWithLeft(p);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;else if (data.compareTo(p.data)&gt;0)&#123;//向右子树寻找插入位置</span><br><span class="line">       p.right=insert(data,p.right);</span><br><span class="line"></span><br><span class="line">       if(height(p.right)-height(p.left)==2)&#123;</span><br><span class="line">           if (data.compareTo(p.right.data)&lt;0)&#123;</span><br><span class="line">               //进行右左旋转</span><br><span class="line">               p=doubleRotateWithRight(p);</span><br><span class="line">           &#125;else &#123;</span><br><span class="line">               p=singleRotateRight(p);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   else</span><br><span class="line">    ;//if exist do nothing</span><br><span class="line">   //重新计算各个结点的高度</span><br><span class="line">   p.height = Math.max( height( p.left ), height( p.right ) ) + 1;</span><br><span class="line"></span><br><span class="line">   return p;//返回根结点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/12/08/2017-12-08-link-list/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/08/2017-12-08-link-list/" itemprop="url">数据结构:链表(进击的Java新人Week.4学习笔记)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-08T08:52:32+08:00">
+                2017-12-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Author: Harry</p>
+<h2 id="一、单链表"><a href="#一、单链表" class="headerlink" title="一、单链表"></a>一、单链表</h2><pre><code>说到链表，我们可以结合数组的一些特性进行分析。数组和链表都有各自的特性，下面我们就先从数组的一些局限性进行分析。
+</code></pre><h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><pre><code>基本的数组操作我就不再讲了，我们可以定义一个大小为5的数组a，然后初始化一些数据a[0]=1，a[1]=2，a[2]=3，如图。
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/array.png?raw=true" alt="image"></p>
+<pre><code>现在想要在数组的第三个位置插入一个数，这时数组执行的操作将a[2]的数据拿出，然后再插入到a[3],最后将数据插入a[2]。
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/array2.png?raw=true" alt="image"></p>
+<pre><code>如果插入数据时发现数组的容量已经满了，这时操作就更加麻烦了，需要初始化一个更加大容量的数组将原有的数据拷贝到新数组，然后再执行插入操作。
+这里只说了插入操作，同样的删除操作也是一个麻烦的事情。这时候我们就可以使用链表进行操作，可以体现出链表的优势。
+</code></pre><h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><pre><code>通过上面看到一些数组的局限性，从而我们就想有没有什么方法可以避免数组的容量局限性。
+这样我们就想到了链表，链表可以快速的实现增删改操作而不必关注扩容问题,链表的概念我就不过多赘述了，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/link1.png?raw=true" alt="image"></p>
+<pre><code>在链表中插入一项：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/link2.png?raw=true" alt="image"></p>
+<pre><code>首先来看一下我定义的一个单链表节点：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class Node &#123;</span><br><span class="line">    private int data;</span><br><span class="line">    private Node next;</span><br><span class="line">    public Node(int data)&#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getData() &#123;</span><br><span class="line">        return data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setData(int data) &#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Node getNext() &#123;</span><br><span class="line">        return next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setNext(Node next) &#123;</span><br><span class="line">        this.next = next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>这是一个简单的链表结构，包含的内容有data和next，后面会讲到双链表和泛型的结合使用。
+这里是单链表的一些简单操作：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">import singlelink.module.Node;</span><br><span class="line"></span><br><span class="line">public class SingleLink &#123;</span><br><span class="line">    public int size;</span><br><span class="line">    private Node first;</span><br><span class="line">    private Node last;</span><br><span class="line"></span><br><span class="line">    public SingleLink()&#123;</span><br><span class="line">        size = 0;</span><br><span class="line">        this.first = null;</span><br><span class="line">        this.last = null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertLast(int data)&#123;</span><br><span class="line">        if(this.first == null)&#123;</span><br><span class="line">            first = new Node(data);</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node node = new Node(data);</span><br><span class="line">            last.setNext(node);</span><br><span class="line">            last = node;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertFirst(int data)&#123;</span><br><span class="line">        if(first == null)&#123;</span><br><span class="line">            first = new Node(data);</span><br><span class="line">            last = first;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node node = new Node(data);</span><br><span class="line">            node.setNext(first);</span><br><span class="line">            first = node;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertByIndex(int index, int data)&#123;</span><br><span class="line">        if(index &gt; (size + 1) || index &lt; 1 )&#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;else if(index == 1)&#123;</span><br><span class="line">            insertFirst(data);</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node node = new Node(data);</span><br><span class="line">            Node tmp = first;</span><br><span class="line">            for(int i = 1; i &lt; index - 1; i++ )&#123;</span><br><span class="line">                tmp = tmp.getNext();</span><br><span class="line">            &#125;</span><br><span class="line">            node.setNext(tmp.getNext());</span><br><span class="line">            tmp.setNext(node);</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return  true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean deleteByIndex(int index)&#123;</span><br><span class="line">        if(index &gt; size || index &lt;= 0)&#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;else if(index == 1)&#123;</span><br><span class="line">            Node node = first.getNext();</span><br><span class="line">            first = node;</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">            Node tmp = first;</span><br><span class="line">            for(int i = 1; i &lt;= index - 2; i++)&#123;</span><br><span class="line">                tmp = tmp.getNext();</span><br><span class="line">            &#125;</span><br><span class="line">            tmp.setNext(tmp.getNext().getNext());</span><br><span class="line">        &#125;</span><br><span class="line">        size--;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean queryData(int data)&#123;</span><br><span class="line">        Node temp = first;</span><br><span class="line">        int index = 1;</span><br><span class="line">        while (temp != null)&#123;</span><br><span class="line">            if(temp.getData() == data)&#123;</span><br><span class="line">                System.out.println(&quot;found data and it index is: &quot; + index);</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">            index++;</span><br><span class="line">            temp = temp.getNext();</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public void display()&#123;</span><br><span class="line">        Node node = first;</span><br><span class="line">        System.out.println(&quot;first -&gt; last :&quot;);</span><br><span class="line">        while (node != null)&#123;</span><br><span class="line">            System.out.print(node.getData() + &quot;-&gt;&quot;);</span><br><span class="line">            node = node.getNext();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>我们可以看到，链表在增删改的时候是比较好操作的，刚好避免了数组这一方面的不足，不用担心扩容的问题。
+但是链表有优势的同时也有不足，在查找的时候，每一次都需要从头到尾遍历一次，使得时间复杂度变高。
+</code></pre><h2 id="二、双链表"><a href="#二、双链表" class="headerlink" title="二、双链表"></a>二、双链表</h2><pre><code>双向链表，顾名思义就是可以通过对当前节点，可以知道上一个节点和下一个节点，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/link3.png?raw=true" alt="image"><br>    链表的节点定如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class Node&lt;T&gt; &#123;</span><br><span class="line">    private Node&lt;T&gt; left;</span><br><span class="line">    private Node&lt;T&gt; right;</span><br><span class="line">    private T data;</span><br><span class="line">    public Node(T data)&#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Node&lt;T&gt; getLeft() &#123;</span><br><span class="line">        return left;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setLeft(Node&lt;T&gt; left) &#123;</span><br><span class="line">        this.left = left;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Node&lt;T&gt; getRight() &#123;</span><br><span class="line">        return right;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setRight(Node&lt;T&gt; right) &#123;</span><br><span class="line">        this.right = right;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public T getData() &#123;</span><br><span class="line">        return data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setData(T data) &#123;</span><br><span class="line">        this.data = data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<pre><code>这里我使用到了泛型来定义节点，这里同样的含有data，只不过这里的data我没有指定类型，可以方便存储不同类型的数据，在例子中我使用到的是User对象，如下：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private int age;</span><br><span class="line"></span><br><span class="line">    public User(String name, int age)&#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;User&#123;&quot; +</span><br><span class="line">                &quot;name=&apos;&quot; + name + &apos;\&apos;&apos; +</span><br><span class="line">                &quot;, age=&quot; + age +</span><br><span class="line">                &apos;&#125;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>链表中的操作如下：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line">import doublelink.module.Node;</span><br><span class="line">import java.util.Comparator;</span><br><span class="line"></span><br><span class="line">public class DoubleLink&lt;T&gt; &#123;</span><br><span class="line">    private int size;</span><br><span class="line">    private Node&lt;T&gt; first;</span><br><span class="line">    private Node&lt;T&gt; last;</span><br><span class="line">    public DoubleLink()&#123;</span><br><span class="line">        this.size = 0;</span><br><span class="line">        this.first = null;</span><br><span class="line">        this.last = null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getSize() &#123;</span><br><span class="line">        return size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertFirst(T data)&#123;</span><br><span class="line">        if(first == null)&#123;</span><br><span class="line">            first = new Node&lt;T&gt;(data);</span><br><span class="line">            last = first;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node&lt;T&gt; temp = new Node&lt;T&gt;(data);</span><br><span class="line">            temp.setRight(first);</span><br><span class="line">            first.setLeft(temp);</span><br><span class="line">            first = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertLast(T data)&#123;</span><br><span class="line">        if(first == null)&#123;</span><br><span class="line">            first = new Node&lt;T&gt;(data);</span><br><span class="line">            last = first;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node&lt;T&gt; node = new Node&lt;T&gt;(data);</span><br><span class="line">            node.setLeft(last);</span><br><span class="line">            last.setRight(node);</span><br><span class="line">            last = node;</span><br><span class="line">        &#125;</span><br><span class="line">        size++;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public T queryData(int index)&#123;</span><br><span class="line">        if(index &lt; 1 || index &gt;size)&#123;</span><br><span class="line">            System.out.println(&quot;You input index invalid!&quot;);</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        else if(index == 1)&#123;</span><br><span class="line">            return first.getData();</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            Node&lt;T&gt; temp = first;</span><br><span class="line">            for(int i = 1; i &lt;= index - 1; i++)&#123;</span><br><span class="line">                temp = temp.getRight();</span><br><span class="line">            &#125;</span><br><span class="line">            return temp.getData();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void display()&#123;</span><br><span class="line">        Node&lt;T&gt; node = first;</span><br><span class="line">        while (node != null)&#123;</span><br><span class="line">            System.out.print(node.getData().toString() + &quot;-&gt;&quot;);</span><br><span class="line">            node = node.getRight();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean remove(Object o) &#123;</span><br><span class="line">        if (o == null) &#123;</span><br><span class="line">            for (Node&lt;T&gt; x = first; x != null; x = x.getRight()) &#123;</span><br><span class="line">                if (x.getData() == null) &#123;</span><br><span class="line">                    unlink(x);</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            for (Node&lt;T&gt; x = first; x != null; x = x.getRight()) &#123;</span><br><span class="line">                if (o.equals(x.getData())) &#123;</span><br><span class="line">                    unlink(x);</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean removeFirst()&#123;</span><br><span class="line">        if(size &gt; 0)&#123;</span><br><span class="line">            unlink(first);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean removeLast()&#123;</span><br><span class="line">        if(size &gt; 0)&#123;</span><br><span class="line">            unlink(last);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    T unlink(Node&lt;T&gt; x) &#123;</span><br><span class="line">        final T element = x.getData();</span><br><span class="line">        final Node&lt;T&gt; right = x.getRight();</span><br><span class="line">        final Node&lt;T&gt; left = x.getLeft();</span><br><span class="line"></span><br><span class="line">        if (left == null) &#123;</span><br><span class="line">            first = right;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            left.setRight(right);</span><br><span class="line">            x.setLeft(null);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (right == null) &#123;</span><br><span class="line">            last = left;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            right.setLeft(left);</span><br><span class="line">            x.setRight(null);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        x.setData(null);</span><br><span class="line">        size--;</span><br><span class="line">        return element;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public T removeByComparator(T data,Comparator&lt;T&gt; comparator)&#123;</span><br><span class="line">        if(comparator == null)&#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            for (Node&lt;T&gt; x = first; x != null; x = x.getRight()) &#123;</span><br><span class="line">                if (comparator.compare(data, x.getData()) == 0) &#123;</span><br><span class="line">                    return unlink(x);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>我需要讲一下的是remove操作，这里我使用了两种remove的方法，一种的仿照JDK的remove方法，是通过equal比较对象是否为同一个，然后再删除，这个需要查找到已经存在的对象，才能删除。
+另外一种是我使用了Comparator接口，重写了compare方法，从而使得删除数据更加灵活，只需要写一个比较器传入就可以remove了。
+
+这里写了两个比较器，一个是比较所有内容，另外一个只比较名字，可以根据需求定义不同的比较器，灵活性更好。
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class UserAllInfoComparator implements Comparator&lt;User&gt; &#123;</span><br><span class="line">    public int compare(User user1, User user2) &#123;</span><br><span class="line">        if(user1.getName().equals(user2.getName()) &amp;&amp; user1.getAge() == user2.getAge())&#123;</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class UserNameComparator implements Comparator&lt;User&gt; &#123;</span><br><span class="line">    public int compare(User user1, User user2) &#123;</span><br><span class="line">        if(user1.getName().equals(user2.getName()))&#123;</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="三、队列"><a href="#三、队列" class="headerlink" title="三、队列"></a>三、队列</h2><pre><code>说到队列，我们大概来看一下Java中容器的关系，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/colection.png?raw=true" alt="image"></p>
+<h3 id="单向队列"><a href="#单向队列" class="headerlink" title="单向队列"></a>单向队列</h3><pre><code>单向队列是单向的，只能从一边进来，另一边出去，而且是先进先出，与栈刚好相反。我们可以用数组模拟，也可以用链表实现。其原理如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue1.png?raw=true" alt="image"></p>
+<h3 id="双向队列"><a href="#双向队列" class="headerlink" title="双向队列"></a>双向队列</h3><pre><code>双向队列可以重两边进来，同样可以从两边出去，如图：
+</code></pre><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue2.png?raw=true" alt="image"></p>
+<h3 id="循环队列"><a href="#循环队列" class="headerlink" title="循环队列"></a>循环队列</h3><p><img src="https://github.com/harryhe1994/imagemakdown/blob/master/image/dequeue3.png?raw=true" alt="image"></p>
+<pre><code>这里有数组实现了一个简单循环队列：
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">public class Deque &#123;</span><br><span class="line">    private int[] data;</span><br><span class="line">    private int head;</span><br><span class="line">    private int tail;</span><br><span class="line">    private int length;</span><br><span class="line">    private final static int DEFAULT_SIZE = 10;</span><br><span class="line"></span><br><span class="line">    public int getLength() &#123;</span><br><span class="line">        return length;</span><br><span class="line">    &#125;</span><br><span class="line">    public Deque()&#123;</span><br><span class="line">        data = new int[DEFAULT_SIZE];</span><br><span class="line">        head = 0;</span><br><span class="line">        tail = 0;</span><br><span class="line">        length = 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Deque(int size)&#123;</span><br><span class="line">        if(size &gt; 0)&#123;</span><br><span class="line">            data = new int[size];</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            data = new int[DEFAULT_SIZE];</span><br><span class="line">        &#125;</span><br><span class="line">        head = 0;</span><br><span class="line">        tail = 0;</span><br><span class="line">        length = 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean isFull()&#123;</span><br><span class="line">        return length == data.length;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean isEmpty()&#123;</span><br><span class="line">        return length == 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean insertLast(int element)&#123;</span><br><span class="line">        if(!isFull())&#123;</span><br><span class="line">            data[tail] = element;</span><br><span class="line">            length++;</span><br><span class="line">            if(!isFull() &amp;&amp; tail &lt;= data.length - 2 &amp;&amp; (tail + 1 != head))&#123;</span><br><span class="line">                tail++;</span><br><span class="line">            &#125;else if(!isFull() &amp;&amp; tail == data.length - 1 &amp;&amp; head != 0)&#123;</span><br><span class="line">                tail = 0;</span><br><span class="line">            &#125;else if(isFull())&#123;</span><br><span class="line">                tail = head;</span><br><span class="line">            &#125;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            System.out.println(&quot;The queue is full!&quot;);</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int removeFirst()&#123;</span><br><span class="line">        if(!isEmpty() &amp;&amp; head &lt; data.length - 1)&#123;</span><br><span class="line">            head++;</span><br><span class="line">            length--;</span><br><span class="line">            return data[head-1];</span><br><span class="line">        &#125;else if(!isEmpty() &amp;&amp; head == data.length - 1)&#123;</span><br><span class="line">            head = 0;</span><br><span class="line">            length--;</span><br><span class="line">            return data[data.length - 1];</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            head = tail;</span><br><span class="line">            System.out.println(&quot;The queue is empty!&quot;);</span><br><span class="line">            return 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>其实队列的实现使用链表比使用数组好很多，读者可以自己用链表实现一下。
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/12/04/2017-12-04-stack-data-structure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/04/2017-12-04-stack-data-structure/" itemprop="url">数据结构:栈(进击的Java新人Week.2学习笔记)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-04T08:52:32+08:00">
+                2017-12-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Author: Kelvin</p>
+<h4 id="一、什么是数据结构"><a href="#一、什么是数据结构" class="headerlink" title="一、什么是数据结构"></a>一、什么是数据结构</h4><p>&emsp;&emsp;数据结构是计算机存储、组织数据的方式。数据结构是指相互之间存在一种或多种特定关系的数据元素的集合。在初学阶段，你可以认为数据结构就是关于数据在计算机中如何组织的一门课程。<br><br>&emsp;&emsp;比如，我要往一个数组中，存1，3，2这三个整数，那么，我实际存的时候，是按照从小到大排着存呢，还是从大到小存，还是没有顺序随便存，这要根据实际的需求来决定。根据需求决定数据存储的方式。这就是数据结构要研究的内容.</p>
+<h4 id="二、什么是栈"><a href="#二、什么是栈" class="headerlink" title="二、什么是栈"></a>二、什么是栈</h4><p>&emsp;&emsp;栈是一种数据结构。栈是一种特殊的线性表。其特殊性在于限定插入和删除数据元素的操作只能在线性表的一端进行，最大的特点就是先进后出。<br><br>&emsp;&emsp;想一想，生活中，有很多栈的例子。比如叠在一起的碗盘，叠的时候我们是从底往高处叠，但是取的时候，我们是从最上面的一个依次向下取。这也是一个典型的栈：后进先出，先进后出。<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/stack.png" alt=""></p>
+<h4 id="三、栈的实现"><a href="#三、栈的实现" class="headerlink" title="三、栈的实现"></a>三、栈的实现</h4><ul>
+<li><p><strong>使用int数组</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class Stack &#123;</span><br><span class="line">    private int[] data;</span><br><span class="line">    private int size;</span><br><span class="line">    private int top = 0; // 指向栈的顶部</span><br><span class="line"></span><br><span class="line">    public Stack(int size) &#123;</span><br><span class="line">        this.size = size;</span><br><span class="line">        this.data = new int[size];</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>使用泛型</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">package cn.kelvin.stack;</span><br><span class="line"></span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Arrays;</span><br><span class="line">import java.util.Stack;</span><br><span class="line"></span><br><span class="line">public class MyStack&lt;T&gt; &#123;</span><br><span class="line">	Object[] datas = &#123;&#125;;</span><br><span class="line">	int size;</span><br><span class="line">	int top=0;</span><br><span class="line">	</span><br><span class="line">	public MyStack() &#123;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public MyStack(int size)&#123;</span><br><span class="line">		this.size = size;</span><br><span class="line">		datas = new Object[size];</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//压栈操作</span><br><span class="line">	public void push(T t)&#123;</span><br><span class="line">		ensureCapacity(top);</span><br><span class="line">		datas[top++] = (Object) t;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//当栈中的元素超出最大容量时扩容</span><br><span class="line">	private void ensureCapacity(int newSize) &#123;</span><br><span class="line">		if(newSize&gt;=size)&#123;</span><br><span class="line">			size = (int)(Math.round(size + size*1.5+1));</span><br><span class="line">			datas = Arrays.copyOf(datas,size);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    //出栈操作</span><br><span class="line">	public T pop()&#123;</span><br><span class="line">		if(top&lt;=size &amp;&amp; top&gt;0)&#123;</span><br><span class="line">			return (T) datas[--top];</span><br><span class="line">		&#125;</span><br><span class="line">		return null;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//访问栈顶元素</span><br><span class="line">	public T getTop()&#123;</span><br><span class="line">		int n = top - 1;</span><br><span class="line">		if(n&lt;size &amp;&amp; n&gt;=0)&#123;</span><br><span class="line">			return (T) datas[n];</span><br><span class="line">		&#125;</span><br><span class="line">		return null;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public int size()&#123;</span><br><span class="line">		return top;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public boolean isEmpty()&#123;</span><br><span class="line">		return top==0;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;也可以使用java中的list来作为stack的底层元素容器，读者可以自己尝试去实现。另外可以去看看jdk中stack的相关实现，读源代码是最好的学习方式。</p>
+<h4 id="四、栈的应用"><a href="#四、栈的应用" class="headerlink" title="四、栈的应用"></a>四、栈的应用</h4><p>&emsp;&emsp;栈在计算机编程中可以说是最基础也是最重要的数据结构了。其功能之强大，可能出乎很多人的意料。</p>
+<ul>
+<li><strong>使用栈实现括号间的匹配验证</strong>（使用上文中泛型栈）<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public static boolean isMatch(String matchStr)&#123;</span><br><span class="line">	MyStack&lt;Integer&gt; stack = new MyStack&lt;&gt;();</span><br><span class="line">	char[] chs = matchStr.toCharArray();</span><br><span class="line">	for(int i=0;i&lt;chs.length;i++)&#123;</span><br><span class="line">		if(chs[i]==&apos;(&apos; || chs[i]==&apos;[&apos; || chs[i]==&apos;&#123;&apos;)&#123;</span><br><span class="line">			stack.push(Integer.valueOf(chs[i]));</span><br><span class="line">		&#125;else &#123;</span><br><span class="line">			if(stack.isEmpty())&#123;</span><br><span class="line">				System.out.println(&quot;stack empty&quot;);</span><br><span class="line">				return false;</span><br><span class="line">			&#125;else&#123;</span><br><span class="line">				if(&apos;)&apos;==chs[i])&#123;</span><br><span class="line">					if((stack.getTop()+1)==Integer.valueOf(chs[i]))&#123;</span><br><span class="line">						stack.pop();</span><br><span class="line">					&#125;else&#123;</span><br><span class="line">						System.out.println(&quot;not match&quot;);</span><br><span class="line">						return false;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;else if(&apos;]&apos;==chs[i] || &apos;&#125;&apos;==chs[i])&#123;</span><br><span class="line">					if((stack.getTop()+2)==Integer.valueOf(chs[i]))&#123;</span><br><span class="line">						stack.pop();</span><br><span class="line">					&#125;else&#123;</span><br><span class="line">						System.out.println(&quot;not match&quot;);</span><br><span class="line">						return false;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;else &#123;</span><br><span class="line">					return false;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	if(stack.isEmpty())&#123;</span><br><span class="line">		return true;</span><br><span class="line">	&#125;</span><br><span class="line">	return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>该程序仅支持 ({[ 之间的匹配，对于输入包含其他字符的字符串，会直接return false，读者可以自行输入测试。</p>
+<ul>
+<li><p><strong>使用栈实现后缀表达式求值</strong><br>该程序的实现需要借助另一个工具类：TokenStream, 该类是对System.in的一个适配器类。TokenStream接口定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">public interface TokenStream &#123;</span><br><span class="line">	public Token getToken()  throws IOException;</span><br><span class="line">    public void consumeToken();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Token &#123;</span><br><span class="line">	public enum TokenType &#123;</span><br><span class="line">		LPAR, RPAR,</span><br><span class="line">        PLUS,</span><br><span class="line">        MINUS,</span><br><span class="line">        MULT,</span><br><span class="line">        DIV,</span><br><span class="line">        INT,</span><br><span class="line">        NONE,</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	TokenType tokenType;</span><br><span class="line">	Object value;</span><br><span class="line">	</span><br><span class="line">	public Token(TokenType tokenType, Object value) &#123;</span><br><span class="line">		this.tokenType = tokenType;</span><br><span class="line">		this.value = value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		String val = String.valueOf(value);</span><br><span class="line">		try &#123;</span><br><span class="line">			Integer.valueOf(val);</span><br><span class="line">			return &quot;&#123;&quot; + tokenType + &quot;, INTEGER(&quot; + value + &quot;)&#125;&quot;;</span><br><span class="line">		&#125; catch (Exception e) &#123;</span><br><span class="line">			return &quot;&#123;&quot; + tokenType + &quot;, &quot; + &apos;&quot;&apos;+val+&apos;&quot;&apos; + &quot;&#125;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public TokenType getTokenType() &#123;</span><br><span class="line">		return tokenType;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setTokenType(TokenType tokenType) &#123;</span><br><span class="line">		this.tokenType = tokenType;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Object getValue() &#123;</span><br><span class="line">		return value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setValue(Object value) &#123;</span><br><span class="line">		this.value = value;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>我的一个实现类（实现的方法应该会有所差异，读者可以尝试去使用自己的方式实现）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.kelvin.adapter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.kelvin.adapter.Token.TokenType;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTokenStream</span> <span class="keyword">implements</span> <span class="title">TokenStream</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> tokenIndex=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">private</span> List&lt;Token&gt; tokenCache = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">	InputStream in;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@SuppressWarnings</span>(<span class="string">"resource"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyTokenStream</span><span class="params">(InputStream in)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.in = in;</span><br><span class="line">		String input = <span class="keyword">new</span> Scanner(in).nextLine();</span><br><span class="line">		parseInput(input);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">parseInput</span><span class="params">(String input)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">null</span>==input || <span class="string">""</span>.equals(input))&#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">while</span>(i&lt;input.length())&#123;</span><br><span class="line">			<span class="keyword">char</span> ch = input.charAt(i);</span><br><span class="line">			<span class="keyword">switch</span> (ch) &#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">'('</span>:</span><br><span class="line">				tokenCache.add(<span class="keyword">new</span> Token(Token.TokenType.LPAR, String.valueOf(ch)));</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">')'</span>:</span><br><span class="line">				tokenCache.add(<span class="keyword">new</span> Token(Token.TokenType.RPAR, String.valueOf(ch)));			</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">'+'</span>:</span><br><span class="line">				tokenCache.add(<span class="keyword">new</span> Token(Token.TokenType.PLUS, String.valueOf(ch)));</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">'-'</span>:</span><br><span class="line">				tokenCache.add(<span class="keyword">new</span> Token(Token.TokenType.MINUS, String.valueOf(ch)));</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">'*'</span>:</span><br><span class="line">				tokenCache.add(<span class="keyword">new</span> Token(Token.TokenType.MULT, String.valueOf(ch)));</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">'/'</span>:</span><br><span class="line">				tokenCache.add(<span class="keyword">new</span> Token(Token.TokenType.DIV, String.valueOf(ch)));</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				<span class="keyword">try</span> &#123;</span><br><span class="line">					Integer num = Integer.valueOf(String.valueOf(ch));</span><br><span class="line">					tokenCache.add(<span class="keyword">new</span> Token(Token.TokenType.INT, num));</span><br><span class="line">				&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"><span class="comment">//					e.printStackTrace();</span></span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			i++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Token <span class="title">getToken</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(tokenIndex&lt;tokenCache.size())&#123;</span><br><span class="line">			<span class="keyword">return</span> tokenCache.get(tokenIndex);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Token(TokenType.NONE, <span class="keyword">null</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">consumeToken</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		tokenIndex ++;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>java虚拟机的实现是基于栈的</strong><br><br>这里举一个简单的例子来说明在java虚拟机中是如何使用栈。Java虚拟机规范里定义了Java所使用的字节码。我们知道Java文件要先编译成字节码文件，也就是class文件，请看example：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class Main &#123; // Main.java</span><br><span class="line">    public static int add(int a, int b)&#123; </span><br><span class="line">        return a + b;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行javac Main.java（或者javap -c Main）后可以看到编译后的字节码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public static int add(int, int);</span><br><span class="line">    Code:</span><br><span class="line">       0: iload_0</span><br><span class="line">       1: iload_1</span><br><span class="line">       2: iadd</span><br><span class="line">       3: ireturn</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>add 函数被编成了四条字节码指令，这四条字节码是什么意思呢？<br><br>你可以认为Java的每一个函数都有一个操作数栈，每条指令就是在对这个操作数栈进行操作。比如 iload_0，就代表把第一个参数 push 进操作数栈，iload_1代表把第二个参数 push 进操作数栈，而 iadd 代表，从栈上连续pop两次，取两个数，将其相加，再把结果送到栈上。ireturn 则表示把栈顶的值做为返回值传给调用者。Java字节码的整个执行过程都是在这样一个栈上的。如果用图来表示，这四个步骤就是:</p>
+<ul>
+<li>iload_0，使a先进栈</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/java_stack_01.png" alt=""></p>
+<ul>
+<li>iload_1， 使b进栈</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/java_stack_02.png" alt=""></p>
+<ul>
+<li>iadd，做了三件事情，b 和 a 出栈，计算 a+b，将计算结果入栈：</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-30/java_stack_03.png" alt=""></p>
+<ul>
+<li>ireturn 将当前栈顶的值返回出去。</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/23/2017-11-23-bit-operation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/23/2017-11-23-bit-operation/" itemprop="url">Java位操作(进击的Java新人Week.3学习笔记)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-23T20:10:16+08:00">
+                2017-11-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Author: Oscar</p>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><ul>
+<li>基础题目</li>
+<li>计算二进制数中1的个数</li>
+<li>异或</li>
+<li>巧解找数字问题</li>
+</ul>
+<h1 id="基础题目"><a href="#基础题目" class="headerlink" title="基础题目"></a>基础题目</h1><p>当执行乘法，除法和模运算时，有出现关于2的整数次幂的，往往可以使用位操作来解决。例如，求n mod 16，比较好的写法是<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> t = n &amp; <span class="number">0xf</span>; <span class="comment">// not n % 16</span></span><br></pre></td></tr></table></figure></p>
+<p>判断一个数的奇偶性<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 奇数返回 true</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isOdd</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n &amp; <span class="number">1</span> == <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对整数n乘(除)以2的整数次幂，可以使用左(右)移来实现，而不是直接乘或者除。有一道笔试题，不准使用乘法，实现 n*7 ，答案是<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">n &lt;&lt; <span class="number">3</span> − n;</span><br><span class="line"><span class="comment">// 当然，也可以使用 n &lt;&lt; 2 + n &lt;&lt; 1 + n，这种办法要差一些。</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="计算二进制数中1的个数"><a href="#计算二进制数中1的个数" class="headerlink" title="计算二进制数中1的个数"></a>计算二进制数中1的个数</h1><p>一个整数，要求去掉它的二进制表示法的最后一次出现的1，例如， 110，去掉最后一个1就是100。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">expellOne</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//a的最后一个1的位置，对应于a-1是0</span></span><br><span class="line">     <span class="keyword">return</span> a &amp; (a − <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>统计整数转成二进制后总共有多少位是1。例如110，统计的结果就是2。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">calcOnes</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(a != <span class="number">0</span>) &#123;</span><br><span class="line">        a = expellOne(a);</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="异或"><a href="#异或" class="headerlink" title="异或"></a>异或</h1><p>异或是按位操作，相同为0，不同为1。异或有三个特点：</p>
+<ol>
+<li>0^0=0,0^1=1  0异或任何数＝任何数</li>
+<li>1^0=1,1^1=0  1异或任何数－任何数取反 </li>
+<li>任何数异或自己＝把自己置0 <br></li>
+</ol>
+<p>因此，在汇编语言中，经常使用“xor ax, ax”这样的语句来清零寄存器。异或遵循结合律和交换律，从而有“a xor b xor a = a xor a xor b = (a xor a) xor b = 0 xor b = b”。</p>
+<p>不使用第三个变量，交换整型变量 a 和 b 的值。可以使用异或来解决。代码是:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a ˆ b, b = a ˆ b, a = a ˆ b;</span><br></pre></td></tr></table></figure></p>
+<h1 id="巧解找数字问题"><a href="#巧解找数字问题" class="headerlink" title="巧解找数字问题"></a>巧解找数字问题</h1><p>一个整型数组里除了一个数字之外，其他的数字都出现了两次。请找出这个数字。</p>
+<p>我们可以使用异或来解决这个问题，把数组里的所有元素全部进行异或操作。由于异或操作的交换律和结合律我们知道，所有出现了两次的数字，都与自己先结合进行运算，那么结果就是0，最后，剩下的那个数字就是要找的数字。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo03_05_02</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> [] nums = &#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">1</span>,<span class="number">3</span>&#125;;</span><br><span class="line">        <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> num : nums)&#123;</span><br><span class="line">            result^=num;</span><br><span class="line">            System.out.println(<span class="string">"result:"</span>+result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果数组中只出现了一次的数字有两个，而其他数字都出现了两次呢？</p>
+<p>思路是，如果能够把原数组分为两个子数组。在每个子数组中，包含一个只出现一次的数字，而其他数字都出现两次。如果能够这样拆分原数组，按照上一题的办法就可以分别求出这两个只出现一次的数字了。</p>
+<p>还是从头到尾依次异或数组中的每一个数字，那么最终得到的结果就是两个只出现一次的数字的异或结果。因为其他数字都出现了两次，在异或的过程中全部抵消掉了。由于这两个数字不一样，那么这个异或结果肯定不为0，也就是说在这个结果数字的二进制表示中至 少就有一位为1。我们在结果数字中找到第一个为1的位的位置，记为第 N 位。这两个数字不 同，意味着为1的那个位是相异的。现在我们以第 N 位是不是 1 为标准把原数组中的数字分成两个子数组，第一个子数组中每个数字的第 N 位都为1，而第二个子数组的每个数字的第 N 位都为0。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo03_05_03</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] nums = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">6</span>&#125;;</span><br><span class="line">        findNums(nums, nums.length);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">findNums</span><span class="params">(<span class="keyword">int</span>[] data, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> num1 = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> num2 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (length &lt; <span class="number">2</span>)</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> ansXor = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++)</span><br><span class="line">            ansXor ^= data[i];               <span class="comment">//异或</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> pos = findFirstOne(ansXor);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (testBit(data[i], pos))</span><br><span class="line">                num1 ^= data[i];</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                num2 ^= data[i];</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"the two numbers are "</span> + num1 + <span class="string">" and "</span> + num2);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">findFirstOne</span><span class="params">(<span class="keyword">int</span> value)</span>  <span class="comment">//取二进制中首个为1的位置</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> pos = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> ((value &amp; <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">            value = value &gt;&gt; <span class="number">1</span>; <span class="comment">//向右移一位</span></span><br><span class="line">            pos++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> pos;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">testBit</span><span class="params">(<span class="keyword">int</span> value, <span class="keyword">int</span> pos)</span> <span class="comment">//测试某位置是否为1</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ((value &gt;&gt; pos) &amp; <span class="number">1</span>) != <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>1-1000中少了两个数，找出没有出现的两个数，数组是无序的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo03_05_04</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] num = &#123;<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>&#125;;</span><br><span class="line">        <span class="keyword">int</span> num1 = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> num2 = <span class="number">0</span>;</span><br><span class="line">        findLostTwo(num, num.length, num1, num2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">findLostTwo</span><span class="params">(<span class="keyword">int</span> num[], <span class="keyword">int</span> length, <span class="keyword">int</span> num1, <span class="keyword">int</span> num2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> temp = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> i;</span><br><span class="line">        <span class="comment">//返回的temp就是缺失的两个数的异或</span></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            temp ^= (i + <span class="number">1</span>);</span><br><span class="line">            temp ^= num[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> first_not_zero = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> ((temp &amp; <span class="number">1</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">            first_not_zero++;</span><br><span class="line">            temp = temp &gt;&gt; <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (testBit(i + <span class="number">1</span>, first_not_zero - <span class="number">1</span>))</span><br><span class="line">                num1 ^= (i + <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                num2 ^= (i + <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> (testBit(num[i], first_not_zero - <span class="number">1</span>))</span><br><span class="line">                num1 ^= num[i];</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                num2 ^= num[i];</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"num1:"</span> + num1 + <span class="string">",num2:"</span> + num2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">testBit</span><span class="params">(<span class="keyword">int</span> value, <span class="keyword">int</span> pos)</span> <span class="comment">//测试某位置是否为1</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ((value &gt;&gt; pos) &amp; <span class="number">1</span>) != <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/23/2017-11-23-recursive-descent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OurIris">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/23/2017-11-23-recursive-descent/" itemprop="url">递归下降法求四则运算表达式的值(进击的Java新人Week.3学习笔记)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-23T17:47:09+08:00">
+                2017-11-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Author: Oscar</p>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><ul>
+<li>递归算法</li>
+<li>BNF范式<ul>
+<li>定义</li>
+<li>终结符和非终结符</li>
+<li>语法</li>
+</ul>
+</li>
+<li>递归下降求值法</li>
+</ul>
+<h1 id="递归算法"><a href="#递归算法" class="headerlink" title="递归算法"></a>递归算法</h1><ol>
+<li>递归算法是把问题转化为规模缩小了的同类问题的子问题，然后递归调用函数（或过程）来表示问题的解。子问题与原始问题为同样的事情，且更为简单<br></li>
+<li>不能无限的调用本身，须有个出口。</li>
+</ol>
+<h1 id="BNF范式"><a href="#BNF范式" class="headerlink" title="BNF范式"></a>BNF范式</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><blockquote>
+<p>BNF范式也叫巴科斯范式，它奠定了现代计算机的基础。它以递归方式描述语言中的各种成分，凡遵守其规则的程序就可保证语法上的正确性。BNF由于其简洁、明了、科学而广泛接受，成为描述各种程序设计语言的常用工具。</p>
+</blockquote>
+<h2 id="终结符和非终结符"><a href="#终结符和非终结符" class="headerlink" title="终结符和非终结符"></a>终结符和非终结符</h2><blockquote>
+<p>终结符：不能单独出现在推导式左边的符号，即不能再进行推导，是不可再拆分的最小元素。</p>
+</blockquote>
+<blockquote>
+<p>非终结符：可理解为一个可拆分的元素</p>
+</blockquote>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>公式： &lt;符号&gt; ::= &lt;使用符号的表达式1&gt;|&lt;使用符号的表达式2&gt; <br><br>这里的&lt;符号&gt;是非终结符，即可以继续拆分，用&lt;&gt;括起来的是非终结符。::=和:=是同一个意思，都表示为定义。| 表示或，即可用表达式1或表达式2</p>
+</blockquote>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><blockquote>
+<p>&lt;句子&gt; ::= &lt;主语&gt; &lt;谓语&gt; &lt;宾语&gt; <br><br>&lt;谓语&gt; ::= &lt;动词&gt; | &lt;动词短语&gt; <br><br>&lt;主语&gt; ::= 你 | 我 | 他 <br><br>&lt;句子&gt;&lt;谓语&gt;&lt;主语&gt;&lt;宾语&gt;等等带&lt;&gt;的，都是非终结符，可以继续拆分，而你我他则是最小元素，不可拆分。</p>
+</blockquote>
+<h1 id="递归下降"><a href="#递归下降" class="headerlink" title="递归下降"></a>递归下降</h1><blockquote>
+<p>传统上，编写语法分析器有两种方法，一种是自顶向下，一种是自底自上。自顶向下是从起始非终结符开始，不断地对非终结符进行分解，直到匹配输入的终结符；自顶向下方法就是我们所说的递归下降。</p>
+</blockquote>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><blockquote>
+<p>使用BNF语法分析简单的四则运算表达式（一元多项式）<br><br>如：1 + 3 * (4 + 2)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;expr&gt; ::= &lt;expr&gt; + &lt;term&gt;</span><br><span class="line">         | &lt;expr&gt; - &lt;term&gt;</span><br><span class="line">         | &lt;term&gt;</span><br><span class="line"> </span><br><span class="line">&lt;term&gt; ::= &lt;term&gt; * &lt;factor&gt;</span><br><span class="line">         | &lt;term&gt; / &lt;factor&gt;</span><br><span class="line">         | &lt;factor&gt;</span><br><span class="line"> </span><br><span class="line">&lt;factor&gt; ::= ( &lt;expr&gt; )</span><br><span class="line">           | Num</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>有了BNF方法后，采用递归向下的方法来实现编译器是很直观的。</p>
+</blockquote>
+<h4 id="Java-Code"><a href="#Java-Code" class="headerlink" title="Java Code"></a>Java Code</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyParser</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> pos = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">expr</span><span class="params">(<span class="keyword">char</span>[] s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> t = term(s);</span><br><span class="line">        <span class="keyword">while</span> (s[pos] == <span class="string">'+'</span> || s[pos] == <span class="string">'-'</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[pos] == <span class="string">'+'</span>)&#123;</span><br><span class="line">                pos++;</span><br><span class="line">                t = t + term(s);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (s[pos] == <span class="string">'-'</span>)&#123;</span><br><span class="line">                pos++;</span><br><span class="line">                t = t - term(s);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">term</span><span class="params">(<span class="keyword">char</span>[] s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> t = factor(s);</span><br><span class="line">        <span class="keyword">while</span> (s[pos] == <span class="string">'*'</span> || s[pos] == <span class="string">'/'</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[pos] == <span class="string">'*'</span>)&#123;</span><br><span class="line">                pos++;</span><br><span class="line">                t = t * factor(s);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (s[pos] == <span class="string">'/'</span>)&#123;</span><br><span class="line">                pos++;</span><br><span class="line">                t = t / factor(s);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">factor</span><span class="params">(<span class="keyword">char</span>[] s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s[pos] == <span class="string">'('</span>)&#123;</span><br><span class="line">            pos++;</span><br><span class="line">            <span class="keyword">double</span> t = expr(s);</span><br><span class="line">            <span class="keyword">if</span> (s[pos] == <span class="string">')'</span>)&#123;</span><br><span class="line">                pos++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> t;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> t = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span>(<span class="string">'0'</span> &lt;= s[pos] &amp;&amp; s[pos] &lt;= <span class="string">'9'</span>)&#123;</span><br><span class="line">                t = t * <span class="number">10</span> + s[pos] - <span class="string">'0'</span>;<span class="comment">//t * 10 处理两位数以上;char[pos] - '0' =&gt;'8'-&gt;int 8</span></span><br><span class="line">                pos++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> (<span class="keyword">double</span>)t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        String expression = <span class="string">"1+3*(4+2)#"</span>;</span><br><span class="line">        <span class="keyword">double</span> result = expr(expression.toCharArray());</span><br><span class="line">        System.out.println(<span class="string">"result : "</span>+result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/23/2017-11-23-java-heap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -760,7 +1569,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>

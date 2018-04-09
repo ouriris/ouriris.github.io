@@ -92,21 +92,18 @@
 
 
 
-<meta name="description" content="Author: Yellow 进击的Java新人Week.1学习笔记Week.1的课程主要包括以下几部分:  有符号整数在计算机中的表示、不同进制之间的转换； Java中static、final关键字； Java中自动装箱拆箱的坑  有符号整数在计算机中的表示、不同进制之间的转换1. 原码、反码与补码对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能">
+<meta name="description" content="Author: Harry He  Serial 收集器单线程收集器，收集垃圾时候必须暂停所有的工作线程，直到它收集结束。 用途：依然是虚拟机运行在客户端模式下的默认新生代收集器 特点：简单高效（与其他收集器的单线程相比），对于限定单个CPU的环境来说，它没有线程交互的开销。    在用户的桌面应用场景中分配给虚拟机管理的内存一般来说不会很大，收集几十兆甚至一两百兆的新生代，停顿的时间完全可以控制">
 <meta name="keywords" content="Java,进击的Java新人">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记)">
-<meta property="og:url" content="https://ouriris.github.io/2017/11/18/2017-11-18-jj-java-week-1/index.html">
+<meta property="og:title" content="Java 垃圾回收机制之垃圾收集器">
+<meta property="og:url" content="https://ouriris.github.io/2018/03/23/2018-03-23-GC-cleaner/index.html">
 <meta property="og:site_name" content="OurIris">
-<meta property="og:description" content="Author: Yellow 进击的Java新人Week.1学习笔记Week.1的课程主要包括以下几部分:  有符号整数在计算机中的表示、不同进制之间的转换； Java中static、final关键字； Java中自动装箱拆箱的坑  有符号整数在计算机中的表示、不同进制之间的转换1. 原码、反码与补码对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能">
+<meta property="og:description" content="Author: Harry He  Serial 收集器单线程收集器，收集垃圾时候必须暂停所有的工作线程，直到它收集结束。 用途：依然是虚拟机运行在客户端模式下的默认新生代收集器 特点：简单高效（与其他收集器的单线程相比），对于限定单个CPU的环境来说，它没有线程交互的开销。    在用户的桌面应用场景中分配给虚拟机管理的内存一般来说不会很大，收集几十兆甚至一两百兆的新生代，停顿的时间完全可以控制">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Oct2Bin.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Bin2Oct.png">
-<meta property="og:updated_time" content="2018-02-23T09:31:16.750Z">
+<meta property="og:updated_time" content="2018-04-09T00:45:12.935Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记)">
-<meta name="twitter:description" content="Author: Yellow 进击的Java新人Week.1学习笔记Week.1的课程主要包括以下几部分:  有符号整数在计算机中的表示、不同进制之间的转换； Java中static、final关键字； Java中自动装箱拆箱的坑  有符号整数在计算机中的表示、不同进制之间的转换1. 原码、反码与补码对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Oct2Bin.jpg">
+<meta name="twitter:title" content="Java 垃圾回收机制之垃圾收集器">
+<meta name="twitter:description" content="Author: Harry He  Serial 收集器单线程收集器，收集垃圾时候必须暂停所有的工作线程，直到它收集结束。 用途：依然是虚拟机运行在客户端模式下的默认新生代收集器 特点：简单高效（与其他收集器的单线程相比），对于限定单个CPU的环境来说，它没有线程交互的开销。    在用户的桌面应用场景中分配给虚拟机管理的内存一般来说不会很大，收集几十兆甚至一两百兆的新生代，停顿的时间完全可以控制">
 
 
 
@@ -135,13 +132,13 @@
 
 
 
-  <link rel="canonical" href="https://ouriris.github.io/2017/11/18/2017-11-18-jj-java-week-1/"/>
+  <link rel="canonical" href="https://ouriris.github.io/2018/03/23/2018-03-23-GC-cleaner/"/>
 
 
 
 
 
-  <title>Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记) | OurIris</title>
+  <title>Java 垃圾回收机制之垃圾收集器 | OurIris</title>
   
 
 
@@ -274,7 +271,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2017/11/18/2017-11-18-jj-java-week-1/">
+    <link itemprop="mainEntityOfPage" href="https://ouriris.github.io/2018/03/23/2018-03-23-GC-cleaner/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -291,7 +288,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Java中数值类型的表示与应用(进击的Java新人Week.1学习笔记)</h2>
+          <h2 class="post-title" itemprop="name headline">Java 垃圾回收机制之垃圾收集器</h2>
         
 
         <div class="post-meta">
@@ -303,8 +300,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-18T17:37:07+08:00">
-                2017-11-18
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-23T16:16:04+08:00">
+                2018-03-23
               </time>
             
 
@@ -346,41 +343,34 @@
       
 
       
-        <p>Author: Yellow</p>
-<h1 id="进击的Java新人Week-1学习笔记"><a href="#进击的Java新人Week-1学习笔记" class="headerlink" title="进击的Java新人Week.1学习笔记"></a>进击的Java新人Week.1学习笔记</h1><p>Week.1的<a href="https://zhuanlan.zhihu.com/p/24393775" title="课程" target="_blank" rel="noopener">课程</a>主要包括以下几部分:</p>
+        <p>Author: Harry He</p>
+<hr>
+<h2 id="Serial-收集器"><a href="#Serial-收集器" class="headerlink" title="Serial 收集器"></a>Serial 收集器</h2><p>单线程收集器，收集垃圾时候必须暂停所有的工作线程，直到它收集结束。</p>
+<p>用途：依然是虚拟机运行在客户端模式下的默认新生代收集器</p>
+<p>特点：简单高效（与其他收集器的单线程相比），对于限定单个CPU的环境来说，它没有线程交互的开销。<br>    在用户的桌面应用场景中分配给虚拟机管理的内存一般来说不会很大，收集几十兆甚至一两百兆的新生代，停顿的时间完全可以控制在几十毫秒到一百多毫秒以内，只要不平凡发生，还是可以接受这点停顿的。</p>
+<p>（老年代和新生代也是和内存相关，虚拟机初始化时已经设定了使用的内存大小，并划分为三部分：新生代– 新创建的对象，<br>旧生代 – 经过多次垃圾回收没有被回收的对象或者大对象<br>持久代– JVM使用的内存，包含类信息等）</p>
+<p>==新生代采用的是复制算法，老年代采用的是标记-整理算法==</p>
+<h2 id="ParNew-收集器"><a href="#ParNew-收集器" class="headerlink" title="ParNew 收集器"></a>ParNew 收集器</h2><p>是Serial收集器的多线程版本，除了使用多线程进行收集之外，其余的收集算法、回收策略等都是使用一样的。</p>
+<p>用途：许多运行在server模式下的虚拟机首选的新生代收集器</p>
+<p>特点：除Serial收集器外，目前只有它可以与CMS（第一款真正意义上的并发收集器）收集器配合工作</p>
+<p>局限：在单个CPU中收集效果不一定比Serial好，甚至可能会由于线程间的开销，在超线程技术实现的两个CPU的环境中都不能百分百保证比Serial好。</p>
+<h2 id="Parallel-Scavenge-收集器"><a href="#Parallel-Scavenge-收集器" class="headerlink" title="Parallel Scavenge 收集器"></a>Parallel Scavenge 收集器</h2><p>是一款新生代收集器，使用复制算法并行多线程收集器。</p>
+<p>特点：一般的收集器的关注点是在于尽可能的缩短垃圾回收时用户线程的停顿时间，而它关注的是达到一个可以控制的吞吐量。即CPU用于运行用户代码的时间和CPU总消耗时间的比值（运行用户代码的时间/（运行用户代码的时间 + 垃圾收集的时间））</p>
+<h2 id="Serial-old-收集器"><a href="#Serial-old-收集器" class="headerlink" title="Serial old 收集器"></a>Serial old 收集器</h2><p>是Serial的老年代版本</p>
+<p>特点： 单线程，使用的是标记-整理算法</p>
+<p>用途：同样也是使用在client模式下的虚拟机使用， 如果在server模式下，JDK1.5以及之前和Parallel Scavenge收集器搭配使用，另外一种用途就是作为CMS收集器的后备预案，在并发收集器发生并行模式失败时使用。</p>
+<h2 id="Parallel-Old-收集器"><a href="#Parallel-Old-收集器" class="headerlink" title="Parallel Old 收集器"></a>Parallel Old 收集器</h2><p>是Parallel Scavenge收集器的老年版本， 使用的是标记-整理算法</p>
+<p>用途：主要为了配合Parallel Scavenge新生代收集器</p>
+<h2 id="CMS（Concurrent-Mark-Sweep）收集器"><a href="#CMS（Concurrent-Mark-Sweep）收集器" class="headerlink" title="CMS（Concurrent Mark Sweep）收集器"></a>CMS（Concurrent Mark Sweep）收集器</h2><p>是一种以获得最短回收停顿时间为目标的收集器。目前很大一部分的Java应用集中在互联网站或者B/S系统的服务端，这类应用很重视服务的相应速度。</p>
+<p>是基于标记-清除算法实现的。</p>
 <ol>
-<li>有符号整数在计算机中的表示、不同进制之间的转换；</li>
-<li>Java中<code>static</code>、<code>final</code>关键字；</li>
-<li>Java中<strong>自动装箱拆箱</strong>的坑</li>
+<li>初始标记（需 stop the world）<br> 标记GC Roots能直接关联到的对象</li>
+<li>并发标记<br> 进行GC Roots tracing的过程</li>
+<li>重新标记（需 stop the world）<br> 修正并发标记期间因用户程序继续运作而导致标记产生变动的部分对象的标记记录</li>
+<li>并发清除</li>
 </ol>
-<h1 id="有符号整数在计算机中的表示、不同进制之间的转换"><a href="#有符号整数在计算机中的表示、不同进制之间的转换" class="headerlink" title="有符号整数在计算机中的表示、不同进制之间的转换"></a>有符号整数在计算机中的表示、不同进制之间的转换</h1><h2 id="1-原码、反码与补码"><a href="#1-原码、反码与补码" class="headerlink" title="1. 原码、反码与补码"></a>1. 原码、反码与补码</h2><p>对于有符号（sign）整数来说，由于其最高位要用来表示符号 （0 = 非负，1 = 负），所以其能表示的数的最大绝对值要比无符号数小一半。已Java中的byte来作为例子，由于其长度为8bit，所以其表示范围为-128~127（即-2^7 ~ 2^7-1，为什么右边要减一？因为“0”占了一个位置啊）。</p>
-<p>对于正数来说，它的<strong>原码、反码、补码都等于其二进制形式</strong>。</p>
-<p>对于负数来说，它的原码、反码、补码是不同的：</p>
-<ol>
-<li>原码：把符号位设为1，后面的数字等于这个负数的绝对值，例如-15就变成了10001111。</li>
-<li>反码：在原码的基础上，保持符号位不变，后面的数字全部取反，例如-15就变成了11110000。</li>
-<li>补码：它是由反码加1得到的。例如，-1的反码是11111110，再加1就是11111111。</li>
-</ol>
-<p>使用补码的好处包括，0和-0的表示是相同的，正负数可以直接进行加减法运算，不必再做额外的转换。而原码和反码则不具备这样的优点。所以现代计算机都是使用补码来表示负数。</p>
-<h2 id="2-不同进制之间的转换"><a href="#2-不同进制之间的转换" class="headerlink" title="2. 不同进制之间的转换"></a>2. 不同进制之间的转换</h2><p>首先，十进制和二进制的互换是最简单的。基本上十进制 -&gt; 二进制就是通过除法求余数：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Oct2Bin.jpg" alt=""></p>
-<p>二进制 -&gt; 十进制则是通过乘法：<br><img src="https://raw.githubusercontent.com/ouriris/ouriris.github.io/hexo/source/uploads/2017-11-27/Bin2Oct.png" alt=""></p>
-<p>对于任意进制之间的转换，基本就是先转成10进制, 再由10进制转换成目标进制的方法。</p>
-<h2 id="3-Java中数值类型的隐式转换"><a href="#3-Java中数值类型的隐式转换" class="headerlink" title="3. Java中数值类型的隐式转换"></a>3. Java中数值类型的隐式转换</h2><p>平时写程序时，如果二元运算符两边都是数字，则要特别注意其中隐式转换的坑：</p>
-<ol>
-<li>Byte.MAX_VALUE + 1 会隐式向上转型成int（字面量“1”被认为是int）</li>
-<li>向上提升时会保持符号位</li>
-<li>向下转型时会丢失精度或符号位</li>
-<li>byte -&gt; short,char → int → long → float → double（从左往右精度不断上升）</li>
-<li>boolean不能转换成数值</li>
-</ol>
-<h2 id="4-“老鼠喝毒药”的解法"><a href="#4-“老鼠喝毒药”的解法" class="headerlink" title="4. “老鼠喝毒药”的解法"></a>4. “老鼠喝毒药”的解法</h2><p>没看过题目的可以先看<a href="https://zhuanlan.zhihu.com/p/24351902" title="题目" target="_blank" rel="noopener">题目</a>。</p>
-<p>本质上是用每一只老鼠表示二进制的每一个bit, 则10只老鼠能组合成2^10=1024种组合.</p>
-<p>则1000杯水可以按序号用二进制编码: </p>
-<p>第1杯 -&gt; 00000 00001</p>
-<p>第2杯 -&gt; 00000 00010</p>
-<p>第3杯 -&gt; 00000 00011</p>
-<p>….</p>
-<p>然后第n杯酒就让二进制bit为1的老鼠喝, 看看谁挂掉, 由挂掉老鼠的bit就知道是对应哪杯水</p>
+<p>局限：对CPU资源敏感、无法处理浮动垃圾、由于基于标记-清除算法，会产生大量的空间碎片，会对大对象的分配带来麻烦。</p>
+<h2 id="G1-收集器"><a href="#G1-收集器" class="headerlink" title="G1 收集器"></a>G1 收集器</h2><p>特点：并行与并发、分代收集（分多个大小相同的region）、空间整合（使用的是标记整理算法）</p>
 
       
     </div>
@@ -413,14 +403,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/03/23/2018-03-23-GC-algorithms/" rel="next" title="Java 垃圾回收机制之列举几种垃圾收集算法">
+                <i class="fa fa-chevron-left"></i> Java 垃圾回收机制之列举几种垃圾收集算法
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/11/22/2017-11-22-java-method-process/" rel="prev" title="Java--方法调用(进击的Java新人Week.3学习笔记)">
-                Java--方法调用(进击的Java新人Week.3学习笔记) <i class="fa fa-chevron-right"></i>
+              <a href="/2018/03/23/2018-03-23-GC-weak-reference/" rel="prev" title="Java 垃圾回收机制之弱引用">
+                Java 垃圾回收机制之弱引用 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -550,7 +544,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进击的Java新人Week-1学习笔记"><span class="nav-number">1.</span> <span class="nav-text">进击的Java新人Week.1学习笔记</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#有符号整数在计算机中的表示、不同进制之间的转换"><span class="nav-number">2.</span> <span class="nav-text">有符号整数在计算机中的表示、不同进制之间的转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-原码、反码与补码"><span class="nav-number">2.1.</span> <span class="nav-text">1. 原码、反码与补码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-不同进制之间的转换"><span class="nav-number">2.2.</span> <span class="nav-text">2. 不同进制之间的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Java中数值类型的隐式转换"><span class="nav-number">2.3.</span> <span class="nav-text">3. Java中数值类型的隐式转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-“老鼠喝毒药”的解法"><span class="nav-number">2.4.</span> <span class="nav-text">4. “老鼠喝毒药”的解法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Serial-收集器"><span class="nav-number">1.</span> <span class="nav-text">Serial 收集器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ParNew-收集器"><span class="nav-number">2.</span> <span class="nav-text">ParNew 收集器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Parallel-Scavenge-收集器"><span class="nav-number">3.</span> <span class="nav-text">Parallel Scavenge 收集器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Serial-old-收集器"><span class="nav-number">4.</span> <span class="nav-text">Serial old 收集器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Parallel-Old-收集器"><span class="nav-number">5.</span> <span class="nav-text">Parallel Old 收集器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CMS（Concurrent-Mark-Sweep）收集器"><span class="nav-number">6.</span> <span class="nav-text">CMS（Concurrent Mark Sweep）收集器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#G1-收集器"><span class="nav-number">7.</span> <span class="nav-text">G1 收集器</span></a></li></ol></div>
             
 
           </div>
